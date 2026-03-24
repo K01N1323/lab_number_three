@@ -1,0 +1,4 @@
+#ifndef BIT_SQEUENCE_H
+#define BIT_SQEUENCE_H
+
+#endif // BIT_SQEUENCE_H
