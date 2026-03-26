@@ -1,44 +1,38 @@
-#ifndef LU_DECOMPOZITION_H
-#define LU_DECOMPOZITION_H
+#ifndef LU_DECOMPOSITION_H
+#define LU_DECOMPOSITION_H
 
-template <class T>
-class LU_Decomposition {
-  public:
-    LU_Decomposition(int n) : LU_Decomposition(nullptr, n) {}
-    LU_Decomposition(T *matrix_data, int n);
+#include "Matrix.h"
+#include "Sequence.h"
+#include <stdexcept>
 
-    ~LU_Decomposition();
+template <class T> class LU_Decomposition {
+public:
+  LU_Decomposition(const Matrix<T> *input);
+  ~LU_Decomposition();
 
-    T *GetL() const;
-    T *GetU() const;
+  Matrix<T> *GetL() const;
+  Matrix<T> *GetU() const;
+  Sequence<int> *GetP() const;
 
-    int *GetP() const;
+  T GetDet() const;
 
-    T GetDet() const;
+  Sequence<T> *Solve(const Sequence<T> *b) const;
 
-    T *Solve(T *b) const;
-    void SolveForTests(T *b) const;
+private:
+  int n;
 
-  private:
-    int n;
+  Matrix<T> *L;
+  Matrix<T> *U;
+  Sequence<int> *P;
 
-    T *L;
-    T *U;
-    int *P;
-    int swaps;
+  int swaps;
 
-    T *x;
-    T *y;
-
-    int neededrow(int skip) const;
-
-    void swaprows(int step);
-
-    void subtraction(int current);
-
-    void decompose();
+  int neededrow(int skip) const;
+  void swaprows(int step);
+  void subtraction(int current);
+  void decompose();
 };
 
-#include "../src/LU_decompozition.tpp"
+#include "LU_Decomposition.tpp"
 
-#endif // lu decompozition h
+#endif // LU_DECOMPOSITION_H
