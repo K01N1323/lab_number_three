@@ -1,8 +1,8 @@
 #ifndef UPPER_TRIANGULAR_MATRIX_H
 #define UPPER_TRIANGULAR_MATRIX_H
 
+#include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
-#include "MutableArraySequence.h"
 #include <stdexcept>
 
 template <class T> class UpperTriangularMatrix : public BaseMatrix<T> {

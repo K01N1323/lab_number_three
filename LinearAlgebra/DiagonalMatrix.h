@@ -1,9 +1,10 @@
 #ifndef DIAGONAL_MATRIX_H
 #define DIAGONAL_MATRIX_H
 
+#include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
-#include "MutableArraySequence.h"
 
+// Диагональная матрица: хранит только элементы главной диагонали
 template <class T> class DiagonalMatrix : public BaseMatrix<T> {
 public:
   DiagonalMatrix(int size) : BaseMatrix<T>(size, size) {
@@ -27,6 +28,14 @@ public:
     } else if (row == col) {
       this->data->Set(row, item);
     }
+  }
+
+  T GetDet() const override {
+    T det = T(1);
+    for (int i = 0; i < this->rows; i++) {
+        det *= this->GetIJ(i, i);
+    }
+    return det;
   }
 
 protected:

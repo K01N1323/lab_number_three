@@ -1,47 +1,45 @@
-#include "LU_Decomposition.h"
-#include "MutableArraySequence.h"
+#include "LUDecompozition.h"
+#include "../Sequences/MutableArraySequence.h"
 #include "SquareMatrix.h"
-#include <algorithm>
 #include <cmath>
 
 template <class T>
-LU_Decomposition<T>::LU_Decomposition(const Matrix<T> *input) {
+LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
+
   this->n = input->GetRows();
+
   if (n != input->GetCols()) {
     throw std::invalid_argument("LU-разложение требует квадратную матрицу");
   }
+
   this->swaps = 0;
 
-  // Используем SquareMatrix как рабочий полигон, так как при перестановках
-  // нарушается строгая треугольная структура
+  // Используем SquareMatrix: треугольная структура нарушается при перестановках
   this->L = new SquareMatrix<T>(n);
   this->U = new SquareMatrix<T>(n);
   this->P = new MutableArraySequence<int>();
 
+  // Копируем матрицу в U, L инициализируем единичной, P — тождественной
   for (int i = 0; i < n; i++) {
-    this->P->Append(i); // Инициализируем вектор перестановок
+    this->P->Append(i);
 
     for (int j = 0; j < n; j++) {
       this->U->SetIJ(i, j, input->GetIJ(i, j));
-
-      if (i == j) {
-        this->L->SetIJ(i, j, T(1.0));
-      } else {
-        this->L->SetIJ(i, j, T(0.0));
-      }
+      this->L->SetIJ(i, j, (i == j) ? T(1.0) : T(0.0));
     }
   }
 
   decompose();
 }
 
-template <class T> LU_Decomposition<T>::~LU_Decomposition() {
+template <class T> LUDecompozition<T>::~LUDecompozition() {
   delete L;
   delete U;
   delete P;
 }
 
-template <class T> int LU_Decomposition<T>::neededrow(int skip) const {
+// Возвращает индекс строки с максимальным по модулю элементом в столбце skip
+template <class T> int LUDecompozition<T>::neededrow(int skip) const {
   T mx = std::abs(U->GetIJ(skip, skip));
   int numrow = skip;
 
@@ -52,10 +50,12 @@ template <class T> int LU_Decomposition<T>::neededrow(int skip) const {
       numrow = i;
     }
   }
+
   return numrow;
 }
 
-template <class T> void LU_Decomposition<T>::swaprows(int step) {
+// Меняет строки в U и L местами (частичный выбор ведущего элемента)
+template <class T> void LUDecompozition<T>::swaprows(int step) {
   int we_swap = neededrow(step);
 
   if (step == we_swap)
@@ -63,19 +63,16 @@ template <class T> void LU_Decomposition<T>::swaprows(int step) {
 
   swaps++;
 
-  // Меняем элементы вектора P
   int tempP = P->Get(step);
   P->Set(step, P->Get(we_swap));
   P->Set(we_swap, tempP);
 
-  // Меняем строки в U
   for (int j = step; j < n; j++) {
     T tempU = U->GetIJ(step, j);
     U->SetIJ(step, j, U->GetIJ(we_swap, j));
     U->SetIJ(we_swap, j, tempU);
   }
 
-  // Меняем строки в L
   for (int j = 0; j < step; j++) {
     T tempL = L->GetIJ(step, j);
     L->SetIJ(step, j, L->GetIJ(we_swap, j));
@@ -83,7 +80,8 @@ template <class T> void LU_Decomposition<T>::swaprows(int step) {
   }
 }
 
-template <class T> void LU_Decomposition<T>::subtraction(int current) {
+// Вычитает текущую строку из нижележащих, заполняя L и обнуляя столбец в U
+template <class T> void LUDecompozition<T>::subtraction(int current) {
   T pivot = U->GetIJ(current, current);
 
   if (std::abs(pivot) < 1e-9)
@@ -99,40 +97,44 @@ template <class T> void LU_Decomposition<T>::subtraction(int current) {
   }
 }
 
-template <class T> void LU_Decomposition<T>::decompose() {
+// Основной цикл разложения PA = LU
+template <class T> void LUDecompozition<T>::decompose() {
   for (int i = 0; i < n - 1; i++) {
     swaprows(i);
     subtraction(i);
   }
 }
 
-template <class T> Matrix<T> *LU_Decomposition<T>::GetL() const { return L; }
+template <class T> Matrix<T> *LUDecompozition<T>::GetL() const { return L; }
 
-template <class T> Matrix<T> *LU_Decomposition<T>::GetU() const { return U; }
+template <class T> Matrix<T> *LUDecompozition<T>::GetU() const { return U; }
 
-template <class T> Sequence<int> *LU_Decomposition<T>::GetP() const {
-  return P;
-}
+template <class T> Sequence<int> *LUDecompozition<T>::GetP() const { return P; }
 
-template <class T> T LU_Decomposition<T>::GetDet() const {
+// Произведение диагональных элементов U с учётом знака перестановок
+template <class T> T LUDecompozition<T>::GetDet() const {
   T det = T(1.0);
+
   for (int i = 0; i < n; i++) {
     det *= U->GetIJ(i, i);
   }
-  if (swaps % 2 != 0) {
+
+  if (swaps % 2 != 0)
     det = -det;
-  }
+
   return det;
 }
 
+// Решает Ax = b через прямой ход Ly = Pb и обратный ход Ux = y
 template <class T>
-Sequence<T> *LU_Decomposition<T>::Solve(const Sequence<T> *b) const {
+Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
+
   if (b->GetLength() != n) {
     throw std::invalid_argument(
         "Размер вектора свободных членов не совпадает с матрицей");
   }
 
-  // Вектор y для решения Ly = Pb
+  // Прямой ход
   Sequence<T> *y = new MutableArraySequence<T>();
   for (int i = 0; i < n; i++)
     y->Append(T(0));
@@ -145,7 +147,7 @@ Sequence<T> *LU_Decomposition<T>::Solve(const Sequence<T> *b) const {
     y->Set(i, sum);
   }
 
-  // Вектор x для решения Ux = y
+  // Обратный ход
   Sequence<T> *x = new MutableArraySequence<T>();
   for (int i = 0; i < n; i++)
     x->Append(T(0));
@@ -158,6 +160,6 @@ Sequence<T> *LU_Decomposition<T>::Solve(const Sequence<T> *b) const {
     x->Set(i, sum / U->GetIJ(i, i));
   }
 
-  delete y; // Очищаем промежуточный вектор
+  delete y;
   return x;
 }

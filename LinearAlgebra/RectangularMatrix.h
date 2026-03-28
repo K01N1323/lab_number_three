@@ -2,7 +2,7 @@
 #define RECTANGULAR_MATRIX_H
 
 #include "BaseMatrix.h"
-#include "MutableArraySequence.h"
+#include "../Sequences/MutableArraySequence.h"
 
 template <class T> class RectangularMatrix : public BaseMatrix<T> {
 public:

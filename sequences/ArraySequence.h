@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "DynamicArray.h"
-#include "sequence.h"
+#include "Sequence.h"
 
 // Абстрактный базовый класс для последовательностей на основе массива
 template <class T> class ArraySequence : public Sequence<T> {

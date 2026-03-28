@@ -1,9 +1,8 @@
 #ifndef BASE_MATRIX_H
 #define BASE_MATRIX_H
 
+#include "../Sequences/Sequence.h"
 #include "Matrix.h"
-#include "Sequence.h"
-#include "gauss_method.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -58,86 +57,12 @@ public:
   virtual int GetRows() const override { return rows; }
   virtual int GetCols() const override { return cols; }
 
-  virtual T GetDet() const override {
-    if (rows != cols) {
-      throw std::invalid_argument(
-          "Для данной матрицы детерминант не определен");
-    }
-    gauss_method<T> mat(this);
-    mat.TakeReverse();
-    return mat.GetDet();
-  }
-
-  virtual Matrix<T> *GetInverseMatrix() const override {
-    if (rows != cols) {
-      throw std::invalid_argument("Для данной матрицы обратная не определена");
-    }
-    gauss_method<T> mat(this);
-    mat.TakeReverse();
-    return mat.GetInverseMatrix();
-  }
-
-  virtual Sequence<T> *SolveSlauGauss(const Sequence<T> *b) const override {
-    if (this->rows != this->cols) {
-      throw std::invalid_argument("Матрица системы должна быть квадратной");
-    }
-    if (b->GetLength() != this->rows) {
-      throw std::invalid_argument("Размер вектора не совпадает с матрицей");
-    }
-
-    gauss_method<T> solver(this);
-    return solver.Solve(b);
-  }
-
-  virtual Sequence<T> *SolveSlauLU(const Sequence<T> *b) const override {
-    if (this->rows != this->cols) {
-      throw std::invalid_argument("Матрица системы должна быть квадратной");
-    }
-    if (b->GetLength() != this->rows) {
-      throw std::invalid_argument("Размер вектора не совпадает с матрицей");
-    }
-
-    LU_Decomposition<T> solver(this);
-    return solver.Solve(b);
-  }
-
-  virtual Matrix<T> *GetL() const override {
-    if (this->rows != this->cols) {
-      throw std::invalid_argument(
-          "LU-разложение применимо только к квадратным матрицам");
-    }
-
-    LU_Decomposition<T> lu(this);
-    Matrix<T> *L_matrix = lu.GetL();
-
-    Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
-    for (int i = 0; i < this->rows; i++) {
-      for (int j = 0; j < this->cols; j++) {
-        result->SetIJ(i, j, L_matrix->GetIJ(i, j));
-      }
-    }
-
-    return result;
-  }
-
-  virtual Matrix<T> *GetU() const override {
-    if (this->rows != this->cols) {
-      throw std::invalid_argument(
-          "LU-разложение применимо только к квадратным матрицам");
-    }
-
-    LU_Decomposition<T> lu(this);
-    Matrix<T> *U_matrix = lu.GetU();
-
-    Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
-    for (int i = 0; i < this->rows; i++) {
-      for (int j = 0; j < this->cols; j++) {
-        result->SetIJ(i, j, U_matrix->GetIJ(i, j));
-      }
-    }
-
-    return result;
-  }
+  virtual T GetDet() const override;
+  virtual Matrix<T> *GetInverseMatrix() const override;
+  virtual Sequence<T> *SolveSlauGauss(const Sequence<T> *b) const override;
+  virtual Sequence<T> *SolveSlauLU(const Sequence<T> *b) const override;
+  virtual Matrix<T> *GetL() const override;
+  virtual Matrix<T> *GetU() const override;
 
   virtual double GetFrobeniusNorm() const override {
 
@@ -221,6 +146,16 @@ public:
     return result;
   }
 
+  virtual Matrix<T> *operator*(const T scalar) const override {
+    Matrix<T> *result = this->CreateEmpty(rows, cols);
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        result->SetIJ(row, col, this->GetIJ(row, col) * scalar);
+      }
+    }
+    return result;
+  }
+
   virtual Matrix<T> *Map(T (*mapper)(const T &)) const override {
     Sequence<T> *MappedData = this->data->Map(mapper);
     Matrix<T> *res = this->CreateEmpty(rows, cols);
@@ -235,10 +170,93 @@ public:
     return res;
   }
 
+  virtual IEnumerator<T> *GetEnumerator() const override {
+    return this->data->GetEnumerator();
+  }
+
   virtual T Reduce(T (*reduce_func)(const T &, const T &),
                    const T &start_value) const override {
     return this->data->Reduce(reduce_func, start_value);
   }
 };
+
+#include "GaussMethod.h"
+#include "LUDecompozition.h"
+
+template <class T>
+T BaseMatrix<T>::GetDet() const {
+  if (rows != cols) {
+    throw std::invalid_argument("Для данной матрицы детерминант не определен");
+  }
+  GaussMethod<T> mat(this);
+  mat.TakeReverse();
+  return mat.GetDet();
+}
+
+template <class T>
+Matrix<T> *BaseMatrix<T>::GetInverseMatrix() const {
+  if (rows != cols) {
+    throw std::invalid_argument("Для данной матрицы обратная не определена");
+  }
+  GaussMethod<T> mat(this);
+  mat.TakeReverse();
+  return mat.GetInverseMatrix();
+}
+
+template <class T>
+Sequence<T> *BaseMatrix<T>::SolveSlauGauss(const Sequence<T> *b) const {
+  if (this->rows != this->cols) {
+    throw std::invalid_argument("Матрица системы должна быть квадратной");
+  }
+  if (b->GetLength() != this->rows) {
+    throw std::invalid_argument("Размер вектора не совпадает с матрицей");
+  }
+  GaussMethod<T> solver(this);
+  return solver.Solve(b);
+}
+
+template <class T>
+Sequence<T> *BaseMatrix<T>::SolveSlauLU(const Sequence<T> *b) const {
+  if (this->rows != this->cols) {
+    throw std::invalid_argument("Матрица системы должна быть квадратной");
+  }
+  if (b->GetLength() != this->rows) {
+    throw std::invalid_argument("Размер вектора не совпадает с матрицей");
+  }
+  LUDecompozition<T> solver(this);
+  return solver.Solve(b);
+}
+
+template <class T>
+Matrix<T> *BaseMatrix<T>::GetL() const {
+  if (this->rows != this->cols) {
+    throw std::invalid_argument("LU-разложение применимо только к квадратным матрицам");
+  }
+  LUDecompozition<T> lu(this);
+  Matrix<T> *L_matrix = lu.GetL();
+  Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
+  for (int i = 0; i < this->rows; i++) {
+    for (int j = 0; j < this->cols; j++) {
+      result->SetIJ(i, j, L_matrix->GetIJ(i, j));
+    }
+  }
+  return result;
+}
+
+template <class T>
+Matrix<T> *BaseMatrix<T>::GetU() const {
+  if (this->rows != this->cols) {
+    throw std::invalid_argument("LU-разложение применимо только к квадратным матрицам");
+  }
+  LUDecompozition<T> lu(this);
+  Matrix<T> *U_matrix = lu.GetU();
+  Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
+  for (int i = 0; i < this->rows; i++) {
+    for (int j = 0; j < this->cols; j++) {
+      result->SetIJ(i, j, U_matrix->GetIJ(i, j));
+    }
+  }
+  return result;
+}
 
 #endif // BASE_MATRIX_H

@@ -1,10 +1,11 @@
 #ifndef LOWER_TRIANGULAR_MATRIX_H
 #define LOWER_TRIANGULAR_MATRIX_H
 
+#include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
-#include "MutableArraySequence.h"
 #include <stdexcept>
 
+// Нижнетреугольная матрица: хранит только элементы на главной диагонали и ниже
 template <class T> class LowerTriangularMatrix : public BaseMatrix<T> {
 public:
   LowerTriangularMatrix(int size) : BaseMatrix<T>(size, size) {
@@ -45,4 +46,4 @@ protected:
   }
 };
 
-#endif
+#endif // LOWER_TRIANGULAR_MATRIX_H
