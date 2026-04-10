@@ -34,7 +34,6 @@ static bool near_eq(double a, double b, double eps = 1e-9) {
   return fabs(a - b) < eps;
 }
 
-// Тестирование квадратной матрицы
 void test_square_matrix() {
   cout << "\n Тестирование SquareMatrix \n";
 
@@ -170,9 +169,8 @@ void test_square_matrix() {
   }
 }
 
-// Тестирование прямоугольной матрицы
 void test_rectangular_matrix() {
-  cout << "\n--- Тестирование RectangularMatrix ---\n";
+  cout << "\nТестирование RectangularMatrix \n";
 
   {
     RectangularMatrix<int> m(2, 3);
@@ -189,9 +187,8 @@ void test_rectangular_matrix() {
   }
 }
 
-// Тестирование диагональной матрицы
 void test_diagonal_matrix() {
-  cout << "\n--- Тестирование DiagonalMatrix ---\n";
+  cout << "\n Тестирование DiagonalMatrix \n";
 
   {
     DiagonalMatrix<double> m(3);
@@ -225,9 +222,8 @@ void test_diagonal_matrix() {
   }
 }
 
-// Тестирование верхнетреугольной матрицы
 void test_upper_triangular_matrix() {
-  cout << "\n--- Тестирование UpperTriangularMatrix ---\n";
+  cout << "\n Тестирование UpperTriangularMatrix \n";
 
   {
     UpperTriangularMatrix<double> m(3);
@@ -255,9 +251,8 @@ void test_upper_triangular_matrix() {
   }
 }
 
-// Тестирование нижнетреугольной матрицы
 void test_lower_triangular_matrix() {
-  cout << "\n--- Тестирование LowerTriangularMatrix ---\n";
+  cout << "\n Тестирование LowerTriangularMatrix \n";
 
   {
     LowerTriangularMatrix<double> m(3);
@@ -283,9 +278,8 @@ void test_lower_triangular_matrix() {
   }
 }
 
-// Тестирование неизменяемой матрицы
 void test_immutable_matrix() {
-  cout << "\n--- Тестирование ImmutableMatrix ---\n";
+  cout << "\n Тестирование ImmutableMatrix \n";
 
   {
     SquareMatrix<double> *base = new SquareMatrix<double>(2);
@@ -308,9 +302,8 @@ void test_immutable_matrix() {
   }
 }
 
-// Тестирование метода Гаусса
 void test_gauss_method() {
-  cout << "\n--- Тестирование GaussMethod ---\n";
+  cout << "\n Тестирование GaussMethod\n";
 
   {
     // 3x + y = 9, x + 2y = 8  =>  x=2, y=3
@@ -356,9 +349,8 @@ void test_gauss_method() {
   }
 }
 
-// Тестирование LU-разложения
 void test_lu_decompozition() {
-  cout << "\n--- Тестирование LUDecompozition ---\n";
+  cout << "\n Тестирование LUDecompozition \n";
 
   {
     // 3x + y = 9, x + 2y = 8  =>  x=2, y=3
@@ -418,9 +410,8 @@ void test_lu_decompozition() {
   }
 }
 
-// Тестирование частичного порядка (диаграмма Хассе и транзитивные дуги)
 void test_partial_ordering() {
-  cout << "\n--- Тестирование PartialOrdering ---\n";
+  cout << "\n Тестирование PartialOrdering \n";
 
   {
     // Отношение: 1 <= 2, 2 <= 3
@@ -501,7 +492,6 @@ void test_partial_ordering() {
   }
 }
 
-// Запуск всех тестов
 void run_all_tests() {
   tests_passed = 0;
   tests_failed = 0;
@@ -516,7 +506,6 @@ void run_all_tests() {
   test_lu_decompozition();
   test_partial_ordering();
 
-  cout << "\n=========================\n";
   cout << " Результаты тестов \n";
   cout << "Пройдено:  " << tests_passed << "\n";
   cout << "Провалено: " << tests_failed << "\n";
@@ -526,5 +515,4 @@ void run_all_tests() {
   } else {
     cout << "Были обнаружены ошибки.\n";
   }
-  cout << "=========================\n\n";
 }

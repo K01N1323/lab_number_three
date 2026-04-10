@@ -17,7 +17,7 @@ public:
   const T &GetIJ(int row, int col) const override {
 
     if (row > col) {
-      return this->zero_value;
+      return this->ZeroValue;
     }
 
     int n = this->rows;

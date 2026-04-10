@@ -4,7 +4,6 @@
 #include "../Sequences/Sequence.h"
 #include "Matrix.h"
 
-// Решение СЛАУ и нахождение обратной матрицы методом Гаусса с выбором ведущего элемента
 template <class T> class GaussMethod {
 public:
 
@@ -21,8 +20,8 @@ public:
 private:
 
   int n;
-  Matrix<T> *matrix_ptr;   // Рабочая копия исходной матрицы
-  Matrix<T> *conmatrix_ptr; // Сопряжённая матрица (правая часть)
+  Matrix<T> *MatrixPtr;
+  Matrix<T> *ConMatrixPtr;
 
   T det;
   int swaps;

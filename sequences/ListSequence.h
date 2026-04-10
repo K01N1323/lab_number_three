@@ -8,16 +8,13 @@
 #include "LinkedList.h"
 #include "sequence.h"
 
-// Абстрактный базовый класс для последовательностей на основе связного списка
 template <class T> class ListSequence : public Sequence<T> {
 protected:
-  LinkedList<T> *items; // Указатель на внутренний связный список
+  LinkedList<T> *items;
 
 public:
-  // Конструктор по умолчанию: создает пустую последовательность
   ListSequence() { this->items = new LinkedList<T>(); }
 
-  // Конструктор: создает последовательность из массива элементов
   ListSequence(T *items, int count) {
     if (items == nullptr) {
       this->items = new LinkedList<T>();
@@ -26,43 +23,32 @@ public:
     }
   }
 
-  // Конструктор копирования
   ListSequence(const ListSequence<T> &other) {
     this->items = new LinkedList<T>(*other.items);
   }
 
-  // Конструктор: создает последовательность на основе переданного списка
   ListSequence(const LinkedList<T> &list) {
     this->items = new LinkedList<T>(list);
   }
 
-  // Деструктор: освобождает выделенную память
   virtual ~ListSequence() override { delete this->items; }
 
-  // Создает экземпляр текущего типа
   virtual ListSequence<T> *Instance() = 0;
 
-  // Создает пустую последовательность текущего типа
   virtual ListSequence<T> *CreateEmpty() const = 0;
 
-  // Возвращает первый элемент последовательности
   const T &GetFirst() const override { return this->items->GetFirst(); }
 
-  // Возвращает последний элемент последовательности
   const T &GetLast() const override { return this->items->GetLast(); }
 
-  // Получает элемент по индексу
   const T &Get(int index) const override { return this->items->Get(index); }
 
-  // Возвращает длину последовательности
   int GetLength() const override { return this->items->GetLength(); }
 
-  // Возвращает итератор для обхода последовательности
   IEnumerator<T> *GetEnumerator() const override {
     return this->items->GetEnumerator();
   }
 
-  // Добавляет элемент в конец последовательности
   Sequence<T> *Append(T item) override {
     ListSequence<T> *target = this->Instance();
 
@@ -71,7 +57,6 @@ public:
     return target;
   }
 
-  // Добавляет элемент в начало последовательности
   Sequence<T> *Prepend(T item) override {
     ListSequence<T> *target = this->Instance();
 
@@ -80,7 +65,6 @@ public:
     return target;
   }
 
-  // Вставляет элемент по заданному индексу
   Sequence<T> *InsertAt(T item, int index) override {
     ListSequence<T> *target = this->Instance();
 
@@ -91,8 +75,6 @@ public:
   // сеттер по индексу
   void Set(int index, const T &item) override { this->items->Set(index, item); }
 
-  // Возвращает новую последовательность, являющуюся конкатенацией текущей и
-  // переданной
   Sequence<T> *Concat(Sequence<T> *list) override {
     ListSequence<T> *new_list = this->CreateEmpty();
 
@@ -116,7 +98,6 @@ public:
     return new_list;
   }
 
-  // Возвращает подпоследовательность по заданным индексам
   Sequence<T> *GetSubsequence(int start_index, int end_index) const override {
     LinkedList<T> *raw_list = this->items->GetSubList(start_index, end_index);
     ListSequence<T> *new_list = this->CreateEmpty();
@@ -127,7 +108,6 @@ public:
     return new_list;
   }
 
-  // Отображает элементы последовательности с применением функции-маппера
   Sequence<T> *Map(T (*mapper)(const T &)) const override {
     ListSequence<T> *new_list = this->CreateEmpty();
 
@@ -138,7 +118,6 @@ public:
     return new_list;
   }
 
-  // Фильтрует элементы последовательности по заданному условию
   Sequence<T> *Where(bool (*where)(const T &)) const override {
     ListSequence<T> *new_list = this->CreateEmpty();
 

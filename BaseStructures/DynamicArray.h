@@ -3,17 +3,14 @@
 
 #include <stdexcept>
 
-// Класс для представления динамического массива
 template <class T> class DynamicArray {
 private:
-    T *items; // Указатель на элементы массива
-    int size; // Текущий размер массива
+    T *items;
+    int size;
 
 public:
-    // Конструктор: создает массив заданного размера
     DynamicArray(int size) : DynamicArray(nullptr, size) {}
 
-    // Конструктор: проверяет и инициализирует массив переданными элементами
     DynamicArray(T *items, int count) {
         this->size = count;
         this->items = new T[size];
@@ -29,7 +26,6 @@ public:
         }
     }
 
-    // Конструктор копирования
     DynamicArray(const DynamicArray<T> &dynamic_array) {
         this->size = dynamic_array.size;
         this->items = new T[size];
@@ -39,12 +35,10 @@ public:
         }
     }
 
-    // Возвращает размер массива
     int GetSize() const { 
         return this->size; 
     }
 
-    // Получает элемент по индексу
     const T &Get(int index) const {
         if (index < 0 || index >= size) {
             throw std::out_of_range("Индекс невалиден");
@@ -53,7 +47,6 @@ public:
         return items[index];
     }
 
-    // Устанавливает значение элемента по индексу
     void Set(int index, T value) {
         if (index < 0 || index >= size) {
             throw std::out_of_range("Индекс невалиден");
@@ -62,7 +55,6 @@ public:
         items[index] = value;
     }
 
-    // Изменяет размер массива
     void Resize(int new_size) {
         T *new_items = new T[new_size];
         int elements_to_copy = (new_size < size) ? new_size : size;
@@ -76,7 +68,6 @@ public:
         this->items = new_items;
     }
 
-    // Деструктор: освобождает выделенную память
     ~DynamicArray() { 
         delete[] items; 
     }

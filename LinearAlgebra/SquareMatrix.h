@@ -4,7 +4,6 @@
 #include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
 
-// Квадратная матрица со сплошным хранением всех элементов
 template <class T> class SquareMatrix : public BaseMatrix<T> {
 public:
   SquareMatrix(int size) : BaseMatrix<T>(size, size) {

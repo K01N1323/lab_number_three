@@ -4,7 +4,6 @@
 #include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
 
-// Диагональная матрица: хранит только элементы главной диагонали
 template <class T> class DiagonalMatrix : public BaseMatrix<T> {
 public:
   DiagonalMatrix(int size) : BaseMatrix<T>(size, size) {
@@ -16,7 +15,7 @@ public:
 
   const T &GetIJ(int row, int col) const override {
     if (row != col) {
-      return this->zero_value;
+      return this->ZeroValue;
     }
     return this->data->Get(row);
   }
@@ -32,8 +31,8 @@ public:
 
   T GetDet() const override {
     T det = T(1);
-    for (int i = 0; i < this->rows; i++) {
-        det *= this->GetIJ(i, i);
+    for (int row = 0; row < this->rows; row++) {
+        det *= this->GetIJ(row, row);
     }
     return det;
   }

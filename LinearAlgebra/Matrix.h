@@ -4,7 +4,6 @@
 #include "../Sequences/IEnumerator.h"
 #include "../Sequences/Sequence.h"
 
-// Чисто виртуальный базовый класс для всех видов матриц
 template <class T> class Matrix {
 public:
 
@@ -38,8 +37,8 @@ public:
 
   virtual Matrix<T> *Map(T (*mapper)(const T &)) const = 0;
 
-  virtual T Reduce(T (*reduce_func)(const T &, const T &),
-                   const T &start_value) const = 0;
+  virtual T Reduce(T (*ReduceFunc)(const T &, const T &),
+                   const T &StartValue) const = 0;
 
   virtual IEnumerator<T> *GetEnumerator() const = 0;
 

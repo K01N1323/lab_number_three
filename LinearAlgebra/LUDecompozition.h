@@ -5,11 +5,9 @@
 #include "Matrix.h"
 #include <stdexcept>
 
-// Класс для LU-разложения квадратной матрицы с частичным выбором ведущего элемента
 template <class T> class LUDecompozition {
 public:
 
-  // Конструктор принимает исходную матрицу и сразу строит разложение PA = LU
   LUDecompozition(const Matrix<T> *input);
   ~LUDecompozition();
 
@@ -25,12 +23,11 @@ public:
 
 private:
 
-  int n;           // Размер матрицы
-  Matrix<T> *L;    // Нижнетреугольная матрица
-  Matrix<T> *U;    // Верхнетреугольная матрица
-  Sequence<int> *P; // Вектор перестановок строк
-
-  int swaps; // Количество выполненных перестановок (для знака определителя)
+  int n;
+  Matrix<T> *L;
+  Matrix<T> *U;
+  Sequence<int> *P;
+  int swaps;
 
   // Вспомогательные методы разложения
   int neededrow(int skip) const;

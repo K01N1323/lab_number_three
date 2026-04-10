@@ -19,7 +19,6 @@ private:
   SquareMatrix<int> *GraphMatrix;
   SquareMatrix<int> *ClosureMatrix;
 
-  // Возвращает индекс элемента в списке Elements, или -1 если не найден
   int GetIndex(const T &item) const {
     for (int index = 0; index < Elements->GetLength(); index++) {
       if (Elements->Get(index) == item) {
@@ -38,18 +37,18 @@ private:
 
     Matrix<int> *R = (*GraphMatrix) + (*E);
 
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        ClosureMatrix->SetIJ(i, j, R->GetIJ(i, j));
+    for (int row = 0; row < n; row++) {
+      for (int col = 0; col < n; col++) {
+        ClosureMatrix->SetIJ(row, col, R->GetIJ(row, col));
       }
     }
 
     for (int count = 0; count < n - 1; count++) {
       Matrix<int> *LocMull = (*R) * (*ClosureMatrix);
 
-      for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-          ClosureMatrix->SetIJ(i, j, LocMull->GetIJ(i, j));
+      for (int row = 0; row < n; row++) {
+        for (int col = 0; col < n; col++) {
+          ClosureMatrix->SetIJ(row, col, LocMull->GetIJ(row, col));
         }
       }
 
@@ -109,7 +108,6 @@ public:
     BuildTransitiveClosure();
   }
 
-  // Возвращает true, если x1 <= x2 в данном частичном порядке
   bool IsLessOrEqual(const T &x1, const T &x2) const {
     int row = GetIndex(x1);
     int col = GetIndex(x2);
@@ -122,18 +120,17 @@ public:
     return ClosureMatrix->GetIJ(row, col) > 0;
   }
 
-  // Возвращает все пары, для которых выполняется отношение порядка
   Sequence<Pair<T>> *GetMaterializedEdges() const {
     int n = Elements->GetLength();
 
     Sequence<Pair<T>> *result = new MutableArraySequence<Pair<T>>();
 
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (ClosureMatrix->GetIJ(i, j) > 0) {
+    for (int row = 0; row < n; row++) {
+      for (int col = 0; col < n; col++) {
+        if (ClosureMatrix->GetIJ(row, col) > 0) {
           Pair<T> newPair;
-          newPair.First = Elements->Get(i);
-          newPair.Second = Elements->Get(j);
+          newPair.First = Elements->Get(row);
+          newPair.Second = Elements->Get(col);
           result->Append(newPair);
         }
       }

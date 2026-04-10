@@ -5,7 +5,6 @@
 #include "BaseMatrix.h"
 #include <stdexcept>
 
-// Нижнетреугольная матрица: хранит только элементы на главной диагонали и ниже
 template <class T> class LowerTriangularMatrix : public BaseMatrix<T> {
 public:
   LowerTriangularMatrix(int size) : BaseMatrix<T>(size, size) {
@@ -18,7 +17,7 @@ public:
   const T &GetIJ(int row, int col) const override {
 
     if (row < col) {
-      return this->zero_value;
+      return this->ZeroValue;
     }
 
     int index = (row * (row + 1) / 2) + col;

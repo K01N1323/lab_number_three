@@ -5,7 +5,6 @@
 #include "Matrix.h"
 #include <stdexcept>
 
-// Неизменяемая обёртка над любой матрицей: блокирует все операции записи
 template <class T> class ImmutableMatrix : public Matrix<T> {
 private:
 
@@ -44,7 +43,6 @@ public:
   Matrix<T> *GetL() const override { return CoreMatrix->GetL(); }
   Matrix<T> *GetU() const override { return CoreMatrix->GetU(); }
 
-  // Запись запрещена: матрица неизменяемая
   void SetIJ(int row, int col, const T &item) override {
     throw std::logic_error("Попытка изменить неизменяемую матрицу");
   }
@@ -71,8 +69,8 @@ public:
 
   Matrix<T> *Map(T (*mapper)(const T &)) const override { return CoreMatrix->Map(mapper); }
   
-  T Reduce(T (*reduce_func)(const T &, const T &), const T &start_value) const override {
-    return CoreMatrix->Reduce(reduce_func, start_value);
+  T Reduce(T (*ReduceFunc)(const T &, const T &), const T &StartValue) const override {
+    return CoreMatrix->Reduce(ReduceFunc, StartValue);
   }
   
   IEnumerator<T> *GetEnumerator() const override { return CoreMatrix->GetEnumerator(); }

@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 template <class T>
-static double sum_of_squares_func(const double &acc, const T &val) {
+static double SumOfSquaresFunc(const double &acc, const T &val) {
   double v = static_cast<double>(std::abs(val));
   return acc + v * v;
 }
@@ -19,7 +19,7 @@ protected:
   int rows;
   int cols;
 
-  T zero_value = T(0);
+  T ZeroValue = T(0);
 
 public:
   BaseMatrix(int rows, int cols) : BaseMatrix(nullptr, rows, cols) {}
@@ -65,9 +65,7 @@ public:
   virtual Matrix<T> *GetU() const override;
 
   virtual double GetFrobeniusNorm() const override {
-
-    double sum = this->data->Reduce(sum_of_squares_func<T>, 0.0);
-
+    double sum = this->data->Reduce(SumOfSquaresFunc<T>, 0.0);
     return std::sqrt(sum);
   }
 
@@ -75,9 +73,9 @@ public:
     if (rows != cols) {
       throw std::invalid_argument("Матрица Гильберта должна быть квадратной");
     }
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        this->SetIJ(i, j, T(1.0) / T(i + j + 1));
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        this->SetIJ(row, col, T(1.0) / T(row + col + 1));
       }
     }
     return this;
@@ -87,12 +85,12 @@ public:
     if (rows != cols) {
       throw std::invalid_argument("Единичная матрица обязана быть квадратной");
     }
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        if (i == j)
-          this->SetIJ(i, j, T(1.0));
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        if (row == col)
+          this->SetIJ(row, col, T(1.0));
         else
-          this->SetIJ(i, j, T(0.0));
+          this->SetIJ(row, col, T(0.0));
       }
     }
     return this;
@@ -134,13 +132,13 @@ public:
 
     Matrix<T> *result = this->CreateEmpty(M, P);
 
-    for (int i = 0; i < M; ++i) {
-      for (int j = 0; j < P; j++) {
+    for (int row = 0; row < M; row++) {
+      for (int col = 0; col < P; col++) {
         T sum = T(0);
         for (int k = 0; k < N; k++) {
-          sum += this->GetIJ(i, k) * rv.GetIJ(k, j);
+          sum += this->GetIJ(row, k) * rv.GetIJ(k, col);
         }
-        result->SetIJ(i, j, sum);
+        result->SetIJ(row, col, sum);
       }
     }
     return result;
@@ -160,10 +158,10 @@ public:
     Sequence<T> *MappedData = this->data->Map(mapper);
     Matrix<T> *res = this->CreateEmpty(rows, cols);
 
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        int flatIndex = i * cols + j;
-        res->SetIJ(i, j, MappedData->Get(flatIndex));
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        int flatIndex = row * cols + col;
+        res->SetIJ(row, col, MappedData->Get(flatIndex));
       }
     }
     delete MappedData;
@@ -174,17 +172,16 @@ public:
     return this->data->GetEnumerator();
   }
 
-  virtual T Reduce(T (*reduce_func)(const T &, const T &),
-                   const T &start_value) const override {
-    return this->data->Reduce(reduce_func, start_value);
+  virtual T Reduce(T (*ReduceFunc)(const T &, const T &),
+                   const T &StartValue) const override {
+    return this->data->Reduce(ReduceFunc, StartValue);
   }
 };
 
 #include "GaussMethod.h"
 #include "LUDecompozition.h"
 
-template <class T>
-T BaseMatrix<T>::GetDet() const {
+template <class T> T BaseMatrix<T>::GetDet() const {
   if (rows != cols) {
     throw std::invalid_argument("Для данной матрицы детерминант не определен");
   }
@@ -193,8 +190,7 @@ T BaseMatrix<T>::GetDet() const {
   return mat.GetDet();
 }
 
-template <class T>
-Matrix<T> *BaseMatrix<T>::GetInverseMatrix() const {
+template <class T> Matrix<T> *BaseMatrix<T>::GetInverseMatrix() const {
   if (rows != cols) {
     throw std::invalid_argument("Для данной матрицы обратная не определена");
   }
@@ -227,33 +223,33 @@ Sequence<T> *BaseMatrix<T>::SolveSlauLU(const Sequence<T> *b) const {
   return solver.Solve(b);
 }
 
-template <class T>
-Matrix<T> *BaseMatrix<T>::GetL() const {
+template <class T> Matrix<T> *BaseMatrix<T>::GetL() const {
   if (this->rows != this->cols) {
-    throw std::invalid_argument("LU-разложение применимо только к квадратным матрицам");
+    throw std::invalid_argument(
+        "LU-разложение применимо только к квадратным матрицам");
   }
   LUDecompozition<T> lu(this);
-  Matrix<T> *L_matrix = lu.GetL();
+  Matrix<T> *LMatrix = lu.GetL();
   Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
-  for (int i = 0; i < this->rows; i++) {
-    for (int j = 0; j < this->cols; j++) {
-      result->SetIJ(i, j, L_matrix->GetIJ(i, j));
+  for (int row = 0; row < this->rows; row++) {
+    for (int col = 0; col < this->cols; col++) {
+      result->SetIJ(row, col, LMatrix->GetIJ(row, col));
     }
   }
   return result;
 }
 
-template <class T>
-Matrix<T> *BaseMatrix<T>::GetU() const {
+template <class T> Matrix<T> *BaseMatrix<T>::GetU() const {
   if (this->rows != this->cols) {
-    throw std::invalid_argument("LU-разложение применимо только к квадратным матрицам");
+    throw std::invalid_argument(
+        "LU-разложение применимо только к квадратным матрицам");
   }
   LUDecompozition<T> lu(this);
-  Matrix<T> *U_matrix = lu.GetU();
+  Matrix<T> *UMatrix = lu.GetU();
   Matrix<T> *result = this->CreateEmpty(this->rows, this->cols);
-  for (int i = 0; i < this->rows; i++) {
-    for (int j = 0; j < this->cols; j++) {
-      result->SetIJ(i, j, U_matrix->GetIJ(i, j));
+  for (int row = 0; row < this->rows; row++) {
+    for (int col = 0; col < this->cols; col++) {
+      result->SetIJ(row, col, UMatrix->GetIJ(row, col));
     }
   }
   return result;

@@ -1,10 +1,9 @@
-#include "LUDecompozition.h"
 #include "../Sequences/MutableArraySequence.h"
+#include "LUDecompozition.h"
 #include "SquareMatrix.h"
 #include <cmath>
 
-template <class T>
-LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
+template <class T> LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
 
   this->n = input->GetRows();
 
@@ -14,18 +13,18 @@ LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
 
   this->swaps = 0;
 
-  // Используем SquareMatrix: треугольная структура нарушается при перестановках
+  // не получилось импользовать треугольные тк есть свапы, по замерам квадратная
+  // со свапами лучше
   this->L = new SquareMatrix<T>(n);
   this->U = new SquareMatrix<T>(n);
   this->P = new MutableArraySequence<int>();
 
-  // Копируем матрицу в U, L инициализируем единичной, P — тождественной
-  for (int i = 0; i < n; i++) {
-    this->P->Append(i);
+  for (int row = 0; row < n; row++) {
+    this->P->Append(row);
 
-    for (int j = 0; j < n; j++) {
-      this->U->SetIJ(i, j, input->GetIJ(i, j));
-      this->L->SetIJ(i, j, (i == j) ? T(1.0) : T(0.0));
+    for (int col = 0; col < n; col++) {
+      this->U->SetIJ(row, col, input->GetIJ(row, col));
+      this->L->SetIJ(row, col, (row == col) ? T(1.0) : T(0.0));
     }
   }
 
@@ -38,23 +37,21 @@ template <class T> LUDecompozition<T>::~LUDecompozition() {
   delete P;
 }
 
-// Возвращает индекс строки с максимальным по модулю элементом в столбце skip
 template <class T> int LUDecompozition<T>::neededrow(int skip) const {
   T mx = std::abs(U->GetIJ(skip, skip));
   int numrow = skip;
 
-  for (int i = skip + 1; i < n; i++) {
-    T loc = std::abs(U->GetIJ(i, skip));
+  for (int row = skip + 1; row < n; row++) {
+    T loc = std::abs(U->GetIJ(row, skip));
     if (loc > mx) {
       mx = loc;
-      numrow = i;
+      numrow = row;
     }
   }
 
   return numrow;
 }
 
-// Меняет строки в U и L местами (частичный выбор ведущего элемента)
 template <class T> void LUDecompozition<T>::swaprows(int step) {
   int we_swap = neededrow(step);
 
@@ -67,41 +64,39 @@ template <class T> void LUDecompozition<T>::swaprows(int step) {
   P->Set(step, P->Get(we_swap));
   P->Set(we_swap, tempP);
 
-  for (int j = step; j < n; j++) {
-    T tempU = U->GetIJ(step, j);
-    U->SetIJ(step, j, U->GetIJ(we_swap, j));
-    U->SetIJ(we_swap, j, tempU);
+  for (int col = step; col < n; col++) {
+    T tempU = U->GetIJ(step, col);
+    U->SetIJ(step, col, U->GetIJ(we_swap, col));
+    U->SetIJ(we_swap, col, tempU);
   }
 
-  for (int j = 0; j < step; j++) {
-    T tempL = L->GetIJ(step, j);
-    L->SetIJ(step, j, L->GetIJ(we_swap, j));
-    L->SetIJ(we_swap, j, tempL);
+  for (int col = 0; col < step; col++) {
+    T tempL = L->GetIJ(step, col);
+    L->SetIJ(step, col, L->GetIJ(we_swap, col));
+    L->SetIJ(we_swap, col, tempL);
   }
 }
 
-// Вычитает текущую строку из нижележащих, заполняя L и обнуляя столбец в U
 template <class T> void LUDecompozition<T>::subtraction(int current) {
   T pivot = U->GetIJ(current, current);
 
   if (std::abs(pivot) < 1e-9)
     return;
 
-  for (int k = current + 1; k < n; k++) {
-    T mnozh = U->GetIJ(k, current) / pivot;
-    L->SetIJ(k, current, mnozh);
+  for (int row = current + 1; row < n; row++) {
+    T mnozh = U->GetIJ(row, current) / pivot;
+    L->SetIJ(row, current, mnozh);
 
-    for (int j = current; j < n; j++) {
-      U->SetIJ(k, j, U->GetIJ(k, j) - mnozh * U->GetIJ(current, j));
+    for (int col = current; col < n; col++) {
+      U->SetIJ(row, col, U->GetIJ(row, col) - mnozh * U->GetIJ(current, col));
     }
   }
 }
 
-// Основной цикл разложения PA = LU
 template <class T> void LUDecompozition<T>::decompose() {
-  for (int i = 0; i < n - 1; i++) {
-    swaprows(i);
-    subtraction(i);
+  for (int row = 0; row < n - 1; row++) {
+    swaprows(row);
+    subtraction(row);
   }
 }
 
@@ -111,12 +106,11 @@ template <class T> Matrix<T> *LUDecompozition<T>::GetU() const { return U; }
 
 template <class T> Sequence<int> *LUDecompozition<T>::GetP() const { return P; }
 
-// Произведение диагональных элементов U с учётом знака перестановок
 template <class T> T LUDecompozition<T>::GetDet() const {
   T det = T(1.0);
 
-  for (int i = 0; i < n; i++) {
-    det *= U->GetIJ(i, i);
+  for (int row = 0; row < n; row++) {
+    det *= U->GetIJ(row, row);
   }
 
   if (swaps % 2 != 0)
@@ -125,7 +119,6 @@ template <class T> T LUDecompozition<T>::GetDet() const {
   return det;
 }
 
-// Решает Ax = b через прямой ход Ly = Pb и обратный ход Ux = y
 template <class T>
 Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
 
@@ -136,28 +129,28 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
 
   // Прямой ход
   Sequence<T> *y = new MutableArraySequence<T>();
-  for (int i = 0; i < n; i++)
+  for (int row = 0; row < n; row++)
     y->Append(T(0));
 
-  for (int i = 0; i < n; i++) {
-    T sum = b->Get(P->Get(i));
-    for (int j = 0; j < i; j++) {
-      sum -= L->GetIJ(i, j) * y->Get(j);
+  for (int row = 0; row < n; row++) {
+    T sum = b->Get(P->Get(row));
+    for (int col = 0; col < row; col++) {
+      sum -= L->GetIJ(row, col) * y->Get(col);
     }
-    y->Set(i, sum);
+    y->Set(row, sum);
   }
 
   // Обратный ход
   Sequence<T> *x = new MutableArraySequence<T>();
-  for (int i = 0; i < n; i++)
+  for (int row = 0; row < n; row++)
     x->Append(T(0));
 
-  for (int i = n - 1; i >= 0; i--) {
-    T sum = y->Get(i);
-    for (int j = i + 1; j < n; j++) {
-      sum -= U->GetIJ(i, j) * x->Get(j);
+  for (int row = n - 1; row >= 0; row--) {
+    T sum = y->Get(row);
+    for (int col = row + 1; col < n; col++) {
+      sum -= U->GetIJ(row, col) * x->Get(col);
     }
-    x->Set(i, sum / U->GetIJ(i, i));
+    x->Set(row, sum / U->GetIJ(row, row));
   }
 
   delete y;
