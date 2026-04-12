@@ -1,5 +1,4 @@
 #include "../Sequences/MutableArraySequence.h"
-#include "GaussMethod.h"
 #include <cmath>
 
 template <class T> T clone_mapper(const T &val) { return val; }
@@ -10,8 +9,8 @@ template <class T> GaussMethod<T>::GaussMethod(const Matrix<T> *input) {
   this->det = T(1.0);
   this->swaps = 0;
 
-  this->MatrixPtr = input->Map(clone_mapper<T>);
-  this->ConMatrixPtr = input->Map(zero_mapper<T>);
+  this->MatrixPtr = input->map(clone_mapper<T>);
+  this->ConMatrixPtr = input->map(zero_mapper<T>);
 
   for (int row = 0; row < n; row++) {
     this->ConMatrixPtr->SetIJ(row, row, T(1.0));
@@ -30,7 +29,7 @@ template <class T> T GaussMethod<T>::GetDet() const {
     return T(-1.0) * det;
 }
 
-template <class T> int GaussMethod<T>::neededrow(int skip) const {
+template <class T> int GaussMethod<T>::NeededRow(int skip) const {
   T mx = std::abs(MatrixPtr->GetIJ(skip, skip));
   int numrow = skip;
 
@@ -45,8 +44,8 @@ template <class T> int GaussMethod<T>::neededrow(int skip) const {
   return numrow;
 }
 
-template <class T> void GaussMethod<T>::swaprows(int we_swap1) {
-  int we_swap = neededrow(we_swap1);
+template <class T> void GaussMethod<T>::SwapRows(int we_swap1) {
+  int we_swap = NeededRow(we_swap1);
 
   if (we_swap1 == we_swap)
     return;
@@ -65,7 +64,7 @@ template <class T> void GaussMethod<T>::swaprows(int we_swap1) {
   }
 }
 
-template <class T> void GaussMethod<T>::divisionrow(int num) {
+template <class T> void GaussMethod<T>::DivisionRow(int num) {
   T el = MatrixPtr->GetIJ(num, num);
 
   if (el == T(0)) {
@@ -97,8 +96,8 @@ template <class T> void GaussMethod<T>::subtraction(int current) {
 
 template <class T> void GaussMethod<T>::triangle() {
   for (int row = 0; row < n; row++) {
-    swaprows(row);
-    divisionrow(row);
+    SwapRows(row);
+    DivisionRow(row);
     subtraction(row);
   }
 }
@@ -126,7 +125,7 @@ template <class T> void GaussMethod<T>::reverse() {
 
 template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
   for (int row = 0; row < n; row++) {
-    ConMatrixPtr->SetIJ(row, 0, b->Get(row));
+    ConMatrixPtr->SetIJ(row, 0, b->get(row));
   }
 
   triangle();
@@ -134,7 +133,7 @@ template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
 
   Sequence<T> *result = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++) {
-    result->Append(ConMatrixPtr->GetIJ(row, 0));
+    result->append(ConMatrixPtr->GetIJ(row, 0));
   }
 
   return result;
@@ -142,7 +141,7 @@ template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
 
 template <class T> void GaussMethod<T>::SolveForTests(const Sequence<T> *b) {
   for (int row = 0; row < n; row++) {
-    ConMatrixPtr->SetIJ(row, 0, b->Get(row));
+    ConMatrixPtr->SetIJ(row, 0, b->get(row));
   }
   triangle();
   obrat();
@@ -151,7 +150,7 @@ template <class T> void GaussMethod<T>::SolveForTests(const Sequence<T> *b) {
 template <class T> void GaussMethod<T>::TakeReverse() { reverse(); }
 
 template <class T> Matrix<T> *GaussMethod<T>::GetInverseMatrix() const {
-  return ConMatrixPtr->Map(clone_mapper<T>);
+  return ConMatrixPtr->map(clone_mapper<T>);
 }
 
 template <class T> T GaussMethod<T>::GetElement(int row, int col) const {

@@ -11,7 +11,7 @@ public:
     
     MutableArraySequence(const MutableArraySequence<T> &other) : ArraySequence<T>(other) {}
 
-    MutableArraySequence<T> *Instance() override { 
+    MutableArraySequence<T> *instance() override { 
         return this; 
     }
 

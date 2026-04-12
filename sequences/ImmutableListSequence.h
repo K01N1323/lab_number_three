@@ -13,7 +13,7 @@ public:
     
     ImmutableListSequence(const LinkedList<T> &list) : ListSequence<T>(list) {}
 
-    ListSequence<T> *Instance() override {
+    ImmutableListSequence<T> *instance() override {
         return new ImmutableListSequence<T>(*this);
     }
 

@@ -1,10 +1,10 @@
 #ifndef MATRIXUI_H
 #define MATRIXUI_H
 
-void print_menu(void);
+void PrintMenu(void);
 
 int actions(int flag);
 
-void run_ui(void);
+void RunUI(void);
 
 #endif // MATRIXUI_H

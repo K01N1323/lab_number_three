@@ -1,5 +1,4 @@
 #include "../Sequences/MutableArraySequence.h"
-#include "LUDecompozition.h"
 #include "SquareMatrix.h"
 #include <cmath>
 
@@ -20,7 +19,7 @@ template <class T> LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
   this->P = new MutableArraySequence<int>();
 
   for (int row = 0; row < n; row++) {
-    this->P->Append(row);
+    this->P->append(row);
 
     for (int col = 0; col < n; col++) {
       this->U->SetIJ(row, col, input->GetIJ(row, col));
@@ -37,7 +36,7 @@ template <class T> LUDecompozition<T>::~LUDecompozition() {
   delete P;
 }
 
-template <class T> int LUDecompozition<T>::neededrow(int skip) const {
+template <class T> int LUDecompozition<T>::NeededRow(int skip) const {
   T mx = std::abs(U->GetIJ(skip, skip));
   int numrow = skip;
 
@@ -52,17 +51,17 @@ template <class T> int LUDecompozition<T>::neededrow(int skip) const {
   return numrow;
 }
 
-template <class T> void LUDecompozition<T>::swaprows(int step) {
-  int we_swap = neededrow(step);
+template <class T> void LUDecompozition<T>::SwapRows(int step) {
+  int we_swap = NeededRow(step);
 
   if (step == we_swap)
     return;
 
   swaps++;
 
-  int tempP = P->Get(step);
-  P->Set(step, P->Get(we_swap));
-  P->Set(we_swap, tempP);
+  int tempP = P->get(step);
+  P->set(step, P->get(we_swap));
+  P->set(we_swap, tempP);
 
   for (int col = step; col < n; col++) {
     T tempU = U->GetIJ(step, col);
@@ -95,7 +94,7 @@ template <class T> void LUDecompozition<T>::subtraction(int current) {
 
 template <class T> void LUDecompozition<T>::decompose() {
   for (int row = 0; row < n - 1; row++) {
-    swaprows(row);
+    SwapRows(row);
     subtraction(row);
   }
 }
@@ -130,27 +129,27 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
   // Прямой ход
   Sequence<T> *y = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
-    y->Append(T(0));
+    y->append(T(0));
 
   for (int row = 0; row < n; row++) {
-    T sum = b->Get(P->Get(row));
+    T sum = b->get(P->get(row));
     for (int col = 0; col < row; col++) {
-      sum -= L->GetIJ(row, col) * y->Get(col);
+      sum -= L->GetIJ(row, col) * y->get(col);
     }
-    y->Set(row, sum);
+    y->set(row, sum);
   }
 
   // Обратный ход
   Sequence<T> *x = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
-    x->Append(T(0));
+    x->append(T(0));
 
   for (int row = n - 1; row >= 0; row--) {
-    T sum = y->Get(row);
+    T sum = y->get(row);
     for (int col = row + 1; col < n; col++) {
-      sum -= U->GetIJ(row, col) * x->Get(col);
+      sum -= U->GetIJ(row, col) * x->get(col);
     }
-    x->Set(row, sum / U->GetIJ(row, row));
+    x->set(row, sum / U->GetIJ(row, row));
   }
 
   delete y;

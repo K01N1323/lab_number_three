@@ -30,8 +30,8 @@ private:
   int swaps;
 
   // Вспомогательные методы разложения
-  int neededrow(int skip) const;
-  void swaprows(int step);
+  int NeededRow(int skip) const;
+  void SwapRows(int step);
   void subtraction(int current);
   void decompose();
 };

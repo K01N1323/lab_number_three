@@ -6,13 +6,29 @@
 #include <stdexcept>
 
 template <class T> class LowerTriangularMatrix : public BaseMatrix<T> {
-public:
-  LowerTriangularMatrix(int size) : BaseMatrix<T>(size, size) {
-    this->data = new MutableArraySequence<T>();
-    for (int index = 0; index < size * (size + 1) / 2; index++) {
-      this->data->Append(T(0));
+private:
+  static Sequence<T> *CreateLowerTriangleData(const T *data, int size) {
+    Sequence<T> *result = new MutableArraySequence<T>();
+
+    if (data == nullptr) {
+      for (int count = 0; count < size * (size + 1) / 2; count++) {
+        result->append(T(0));
+      }
+    } else {
+      for (int count = 0; count < size * (size + 1) / 2; count++) {
+        result->append(data[count]);
+      }
     }
+
+    return result;
   }
+
+public:
+  LowerTriangularMatrix(int size)
+      : BaseMatrix<T>(CreateLowerTriangleData(nullptr, size), size, size) {}
+
+  LowerTriangularMatrix(const T *data, int size)
+      : BaseMatrix<T>(CreateLowerTriangleData(data, size), size, size) {}
 
   const T &GetIJ(int row, int col) const override {
 
@@ -22,7 +38,7 @@ public:
 
     int index = (row * (row + 1) / 2) + col;
 
-    return this->data->Get(index);
+    return this->data->get(index);
   }
 
   void SetIJ(int row, int col, const T &item) override {
@@ -34,7 +50,7 @@ public:
     }
 
     int index = (row * (row + 1) / 2) + col;
-    this->data->Set(index, item);
+    this->data->set(index, item);
   }
 
 protected:

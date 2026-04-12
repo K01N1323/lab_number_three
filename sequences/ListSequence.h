@@ -5,8 +5,8 @@
 
 #include <stdexcept>
 
-#include "LinkedList.h"
-#include "sequence.h"
+#include "../BaseStructures/LinkedList.h"
+#include "Sequence.h"
 
 template <class T> class ListSequence : public Sequence<T> {
 protected:
@@ -33,15 +33,15 @@ public:
 
   virtual ~ListSequence() override { delete this->items; }
 
-  virtual ListSequence<T> *Instance() = 0;
+  virtual ListSequence<T> *instance() override = 0;
 
-  virtual ListSequence<T> *CreateEmpty() const = 0;
+  virtual ListSequence<T> *CreateEmpty() const override = 0;
 
   const T &GetFirst() const override { return this->items->GetFirst(); }
 
   const T &GetLast() const override { return this->items->GetLast(); }
 
-  const T &Get(int index) const override { return this->items->Get(index); }
+  const T &get(int index) const override { return this->items->get(index); }
 
   int GetLength() const override { return this->items->GetLength(); }
 
@@ -49,85 +49,85 @@ public:
     return this->items->GetEnumerator();
   }
 
-  Sequence<T> *Append(T item) override {
-    ListSequence<T> *target = this->Instance();
+  Sequence<T> *append(T item) override {
+    ListSequence<T> *target = this->instance();
 
-    target->items->Append(item);
+    target->items->append(item);
 
     return target;
   }
 
-  Sequence<T> *Prepend(T item) override {
-    ListSequence<T> *target = this->Instance();
+  Sequence<T> *prepend(T item) override {
+    ListSequence<T> *target = this->instance();
 
-    target->items->Prepend(item);
+    target->items->prepend(item);
 
     return target;
   }
 
   Sequence<T> *InsertAt(T item, int index) override {
-    ListSequence<T> *target = this->Instance();
+    ListSequence<T> *target = this->instance();
 
     target->items->InsertAt(item, index);
 
     return target;
   }
   // сеттер по индексу
-  void Set(int index, const T &item) override { this->items->Set(index, item); }
+  void set(int index, const T &item) override { this->items->set(index, item); }
 
-  Sequence<T> *Concat(Sequence<T> *list) override {
-    ListSequence<T> *new_list = this->CreateEmpty();
+  Sequence<T> *concat(Sequence<T> *list) override {
+    ListSequence<T> *NewList = this->CreateEmpty();
 
     for (int i = 0; i < this->GetLength(); i++) {
-      new_list->items->Append(this->Get(i));
+      NewList->items->append(this->get(i));
     }
 
     IEnumerator<T> *it = list->GetEnumerator();
     if (it != nullptr) {
       while (it->HasNext()) {
-        new_list->items->Append(it->GetCurrent());
+        NewList->items->append(it->GetCurrent());
         it->MoveNext();
       }
       delete it;
     } else {
       for (int i = 0; i < list->GetLength(); i++) {
-        new_list->items->Append(list->Get(i));
+        NewList->items->append(list->get(i));
       }
     }
 
-    return new_list;
+    return NewList;
   }
 
-  Sequence<T> *GetSubsequence(int start_index, int end_index) const override {
-    LinkedList<T> *raw_list = this->items->GetSubList(start_index, end_index);
-    ListSequence<T> *new_list = this->CreateEmpty();
+  Sequence<T> *GetSubsequence(int StartIndex, int EndIndex) const override {
+    LinkedList<T> *RawList = this->items->GetSubList(StartIndex, EndIndex);
+    ListSequence<T> *NewList = this->CreateEmpty();
 
-    delete new_list->items;
-    new_list->items = raw_list;
+    delete NewList->items;
+    NewList->items = RawList;
 
-    return new_list;
+    return NewList;
   }
 
-  Sequence<T> *Map(T (*mapper)(const T &)) const override {
-    ListSequence<T> *new_list = this->CreateEmpty();
+  Sequence<T> *map(T (*mapper)(const T &)) const override {
+    ListSequence<T> *NewList = this->CreateEmpty();
 
     for (int index = 0; index < this->GetLength(); index++) {
-      new_list->items->Append(mapper(this->Get(index)));
+      NewList->items->append(mapper(this->get(index)));
     }
 
-    return new_list;
+    return NewList;
   }
 
-  Sequence<T> *Where(bool (*where)(const T &)) const override {
-    ListSequence<T> *new_list = this->CreateEmpty();
+  Sequence<T> *where(bool (*where)(const T &)) const override {
+    ListSequence<T> *NewList = this->CreateEmpty();
 
     for (int index = 0; index < this->GetLength(); index++) {
-      if (where(this->Get(index))) {
-        new_list->items->Append(this->Get(index));
+      if (where(this->get(index))) {
+        NewList->items->append(this->get(index));
       }
     }
 
-    return new_list;
+    return NewList;
   }
 };
 

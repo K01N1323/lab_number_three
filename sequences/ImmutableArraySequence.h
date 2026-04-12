@@ -11,7 +11,7 @@ public:
     
     ImmutableArraySequence(const ImmutableArraySequence<T> &other) : ArraySequence<T>(other) {}
 
-    ImmutableArraySequence<T> *Instance() override {
+    ImmutableArraySequence<T> *instance() override {
         return new ImmutableArraySequence<T>(*this);
     }
 

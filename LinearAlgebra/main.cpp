@@ -8,8 +8,8 @@ int main() {
     int run_tests;
     cout << "Запустить тесты перед стартом? (1 - Да, 0 - Нет): ";
     if (cin >> run_tests && run_tests == 1) {
-        run_all_tests();
+        RunAllTests();
     }
-    run_ui();
+    RunUI();
     return 0;
 }

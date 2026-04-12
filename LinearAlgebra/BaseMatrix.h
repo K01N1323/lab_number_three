@@ -36,22 +36,22 @@ public:
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
       throw std::out_of_range("Индекс вне границ матрицы");
     }
-    return data->Get(row * cols + col);
+    return data->get(row * cols + col);
   }
 
   virtual void SetIJ(int row, int col, const T &item) override {
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
       throw std::out_of_range("Индекс вне границ матрицы");
     }
-    data->Set(row * cols + col, item);
+    data->set(row * cols + col, item);
   }
 
-  virtual void Set(int index, const T &item) override {
+  virtual void set(int index, const T &item) override {
     if (index >= rows * cols) {
       throw std::out_of_range("Индекс вне массива");
     }
 
-    data->Set(index, item);
+    data->set(index, item);
   }
 
   virtual int GetRows() const override { return rows; }
@@ -65,7 +65,7 @@ public:
   virtual Matrix<T> *GetU() const override;
 
   virtual double GetFrobeniusNorm() const override {
-    double sum = this->data->Reduce(SumOfSquaresFunc<T>, 0.0);
+    double sum = this->data->reduce(SumOfSquaresFunc<T>, 0.0);
     return std::sqrt(sum);
   }
 
@@ -154,14 +154,14 @@ public:
     return result;
   }
 
-  virtual Matrix<T> *Map(T (*mapper)(const T &)) const override {
-    Sequence<T> *MappedData = this->data->Map(mapper);
+  virtual Matrix<T> *map(T (*mapper)(const T &)) const override {
+    Sequence<T> *MappedData = this->data->map(mapper);
     Matrix<T> *res = this->CreateEmpty(rows, cols);
 
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
         int flatIndex = row * cols + col;
-        res->SetIJ(row, col, MappedData->Get(flatIndex));
+        res->SetIJ(row, col, MappedData->get(flatIndex));
       }
     }
     delete MappedData;
@@ -172,9 +172,9 @@ public:
     return this->data->GetEnumerator();
   }
 
-  virtual T Reduce(T (*ReduceFunc)(const T &, const T &),
+  virtual T reduce(T (*ReduceFunc)(const T &, const T &),
                    const T &StartValue) const override {
-    return this->data->Reduce(ReduceFunc, StartValue);
+    return this->data->reduce(ReduceFunc, StartValue);
   }
 };
 

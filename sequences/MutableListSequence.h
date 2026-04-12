@@ -13,7 +13,7 @@ public:
     
     MutableListSequence(const LinkedList<T> &list) : ListSequence<T>(list) {}
 
-    ListSequence<T> *Instance() override { 
+    ListSequence<T> *instance() override { 
         return this; 
     }
 

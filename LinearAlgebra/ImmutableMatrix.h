@@ -47,7 +47,7 @@ public:
     throw std::logic_error("Попытка изменить неизменяемую матрицу");
   }
 
-  void Set(int index, const T &item) override {
+  void set(int index, const T &item) override {
     throw std::logic_error("Попытка изменить неизменяемую матрицу");
   }
 
@@ -67,10 +67,10 @@ public:
   Matrix<T> *operator*(const Matrix<T> &rv) const override { return *CoreMatrix * rv; }
   Matrix<T> *operator*(const T scalar) const override { return *CoreMatrix * scalar; }
 
-  Matrix<T> *Map(T (*mapper)(const T &)) const override { return CoreMatrix->Map(mapper); }
+  Matrix<T> *map(T (*mapper)(const T &)) const override { return CoreMatrix->map(mapper); }
   
-  T Reduce(T (*ReduceFunc)(const T &, const T &), const T &StartValue) const override {
-    return CoreMatrix->Reduce(ReduceFunc, StartValue);
+  T reduce(T (*ReduceFunc)(const T &, const T &), const T &StartValue) const override {
+    return CoreMatrix->reduce(ReduceFunc, StartValue);
   }
   
   IEnumerator<T> *GetEnumerator() const override { return CoreMatrix->GetEnumerator(); }

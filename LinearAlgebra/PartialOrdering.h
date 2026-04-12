@@ -11,24 +11,24 @@ template <typename T> struct Pair {
 };
 
 // Частичный порядок на конечном множестве элементов,
-// заданный списком пар. Транзитивное замыкание строится при инициализации.
+// Транзитивное замыкание строим при инициализации
 template <class T> class PartialOrdering {
 private:
-
   Sequence<T> *Elements;
   SquareMatrix<int> *GraphMatrix;
   SquareMatrix<int> *ClosureMatrix;
 
   int GetIndex(const T &item) const {
     for (int index = 0; index < Elements->GetLength(); index++) {
-      if (Elements->Get(index) == item) {
+      if (Elements->get(index) == item) {
         return index;
       }
     }
     return -1;
   }
 
-  // Строит транзитивное замыкание отношения методом возведения матрицы в степень
+  // Строит транзитивное замыкание отношения методом возведения матрицы в
+  // степень
   void BuildTransitiveClosure() {
     int n = Elements->GetLength();
 
@@ -69,25 +69,28 @@ private:
   }
 
 public:
-
   PartialOrdering(Sequence<Pair<T>> *pairs) {
     Elements = new MutableArraySequence<T>();
 
     // Собираем уникальные элементы из всех пар
     for (int number = 0; number < pairs->GetLength(); number++) {
-      T firstItem = pairs->Get(number).First;
-      T secondItem = pairs->Get(number).Second;
+      T FirstItem = pairs->get(number).First;
+      T SecondItem = pairs->get(number).Second;
 
-      bool isFirstFound = false;
-      bool isSecondFound = false;
+      bool IsFirstFound = false;
+      bool IsSecondFound = false;
 
       for (int index = 0; index < Elements->GetLength(); index++) {
-        if (Elements->Get(index) == firstItem)  isFirstFound = true;
-        if (Elements->Get(index) == secondItem) isSecondFound = true;
+        if (Elements->get(index) == FirstItem)
+          IsFirstFound = true;
+        if (Elements->get(index) == SecondItem)
+          IsSecondFound = true;
       }
 
-      if (!isFirstFound)  Elements->Append(firstItem);
-      if (!isSecondFound) Elements->Append(secondItem);
+      if (!IsFirstFound)
+        Elements->append(FirstItem);
+      if (!IsSecondFound)
+        Elements->append(SecondItem);
     }
 
     int n = Elements->GetLength();
@@ -97,8 +100,8 @@ public:
 
     // Заполняем матрицу смежности по переданным парам
     for (int number = 0; number < pairs->GetLength(); number++) {
-      int row = GetIndex(pairs->Get(number).First);
-      int col = GetIndex(pairs->Get(number).Second);
+      int row = GetIndex(pairs->get(number).First);
+      int col = GetIndex(pairs->get(number).Second);
 
       if (row != -1 && col != -1) {
         GraphMatrix->SetIJ(row, col, 1);
@@ -128,10 +131,10 @@ public:
     for (int row = 0; row < n; row++) {
       for (int col = 0; col < n; col++) {
         if (ClosureMatrix->GetIJ(row, col) > 0) {
-          Pair<T> newPair;
-          newPair.First = Elements->Get(row);
-          newPair.Second = Elements->Get(col);
-          result->Append(newPair);
+          Pair<T> NewPair;
+          NewPair.First = Elements->get(row);
+          NewPair.Second = Elements->get(col);
+          result->append(NewPair);
         }
       }
     }

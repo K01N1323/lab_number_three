@@ -6,13 +6,29 @@
 #include <stdexcept>
 
 template <class T> class UpperTriangularMatrix : public BaseMatrix<T> {
-public:
-  UpperTriangularMatrix(int size) : BaseMatrix<T>(size, size) {
-    this->data = new MutableArraySequence<T>();
-    for (int index = 0; index < size * (size + 1) / 2; index++) {
-      this->data->Append(T(0));
+private:
+  static Sequence<T> *CreateUpperTriangleData(const T *data, int size) {
+    Sequence<T> *result = new MutableArraySequence<T>();
+
+    if (data == nullptr) {
+      for (int index = 0; index < size * (size + 1) / 2; index++) {
+        result->append(T(0));
+      }
+    } else {
+      for (int count = 0; count < size * (size + 1) / 2; count++) {
+        result->append(data[count]);
+      }
     }
+
+    return result;
   }
+
+public:
+  UpperTriangularMatrix(int size)
+      : BaseMatrix<T>(CreateUpperTriangleData(nullptr, size), size, size) {}
+
+  UpperTriangularMatrix(const T *data, int size)
+      : BaseMatrix<T>(CreateUpperTriangleData(data, size), size, size) {}
 
   const T &GetIJ(int row, int col) const override {
 
@@ -23,7 +39,7 @@ public:
     int n = this->rows;
     int index = (row * (2 * n - row + 1)) / 2 + (col - row);
 
-    return this->data->Get(index);
+    return this->data->get(index);
   }
 
   void SetIJ(int row, int col, const T &item) override {
@@ -37,7 +53,7 @@ public:
     int n = this->rows;
     int index = (row * (2 * n - row + 1)) / 2 + (col - row);
 
-    this->data->Set(index, item);
+    this->data->set(index, item);
   }
 
 protected:

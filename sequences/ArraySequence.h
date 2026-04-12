@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#include "DynamicArray.h"
+#include "../BaseStructures/DynamicArray.h"
 #include "Sequence.h"
 
 template <class T> class ArraySequence : public Sequence<T> {
@@ -27,42 +27,42 @@ public:
 
   virtual ~ArraySequence() override { delete this->items; }
 
-  virtual ArraySequence<T> *Instance() = 0;
+  virtual ArraySequence<T> *instance() override = 0;
 
-  virtual ArraySequence<T> *CreateEmpty() const = 0;
+  virtual ArraySequence<T> *CreateEmpty() const override = 0;
 
-  const T &GetFirst() const override { return this->items->Get(0); }
+  const T &GetFirst() const override { return this->items->get(0); }
 
   const T &GetLast() const override {
-    return this->items->Get(this->items->GetSize() - 1);
+    return this->items->get(this->items->GetSize() - 1);
   }
 
-  const T &Get(int index) const override { return this->items->Get(index); }
+  const T &get(int index) const override { return this->items->get(index); }
 
   int GetLength() const override { return this->items->GetSize(); }
 
   IEnumerator<T> *GetEnumerator() const override { return nullptr; }
 
-  Sequence<T> *Append(T item) override {
-    ArraySequence<T> *target = this->Instance();
+  Sequence<T> *append(T item) override {
+    ArraySequence<T> *target = this->instance();
 
-    target->items->Resize(target->items->GetSize() + 1);
-    target->items->Set(target->items->GetSize() - 1, item);
+    target->items->resize(target->items->GetSize() + 1);
+    target->items->set(target->items->GetSize() - 1, item);
 
     return target;
   }
 
-  Sequence<T> *Prepend(T item) override {
-    ArraySequence<T> *target = this->Instance();
+  Sequence<T> *prepend(T item) override {
+    ArraySequence<T> *target = this->instance();
     int size = target->items->GetSize();
 
-    target->items->Resize(size + 1);
+    target->items->resize(size + 1);
 
     for (int i = size; i > 0; i--) {
-      target->items->Set(i, target->items->Get(i - 1));
+      target->items->set(i, target->items->get(i - 1));
     }
 
-    target->items->Set(0, item);
+    target->items->set(0, item);
     return target;
   }
 
@@ -71,89 +71,89 @@ public:
       throw std::out_of_range("Индекс невалиден");
     }
 
-    ArraySequence<T> *target = this->Instance();
+    ArraySequence<T> *target = this->instance();
     int size = target->items->GetSize();
 
-    target->items->Resize(size + 1);
+    target->items->resize(size + 1);
 
     for (int i = size; i > index; i--) {
-      target->items->Set(i, target->items->Get(i - 1));
+      target->items->set(i, target->items->get(i - 1));
     }
 
-    target->items->Set(index, item);
+    target->items->set(index, item);
     return target;
   }
   // сеттер по индексу
-  void Set(int index, const T &item) override { this->items->Set(index, item); }
+  void set(int index, const T &item) override { this->items->set(index, item); }
 
-  Sequence<T> *Concat(Sequence<T> *list) override {
+  Sequence<T> *concat(Sequence<T> *list) override {
     Sequence<T> *result = this->CreateEmpty();
 
     for (int i = 0; i < this->GetLength(); i++) {
-      Sequence<T> *old_ptr = result;
-      result = result->Append(this->Get(i));
-      if (result != old_ptr)
-        delete old_ptr;
+      Sequence<T> *OldPtr = result;
+      result = result->append(this->get(i));
+      if (result != OldPtr)
+        delete OldPtr;
     }
 
     for (int i = 0; i < list->GetLength(); i++) {
-      Sequence<T> *old_ptr = result;
-      result = result->Append(list->Get(i));
-      if (result != old_ptr)
-        delete old_ptr;
+      Sequence<T> *OldPtr = result;
+      result = result->append(list->get(i));
+      if (result != OldPtr)
+        delete OldPtr;
     }
 
     return result;
   }
 
-  Sequence<T> *GetSubsequence(int start_index, int end_index) const override {
-    if (start_index < 0 || start_index >= this->GetLength() || end_index < 0 ||
-        end_index >= this->GetLength() || start_index > end_index) {
+  Sequence<T> *GetSubsequence(int StartIndex, int EndIndex) const override {
+    if (StartIndex < 0 || StartIndex >= this->GetLength() || EndIndex < 0 ||
+        EndIndex >= this->GetLength() || StartIndex > EndIndex) {
       throw std::out_of_range("Индексы невалидны");
     }
 
     Sequence<T> *result = this->CreateEmpty();
 
-    for (int index = start_index; index <= end_index; index++) {
-      Sequence<T> *old_ptr = result;
+    for (int index = StartIndex; index <= EndIndex; index++) {
+      Sequence<T> *OldPtr = result;
 
-      result = result->Append(this->Get(index));
+      result = result->append(this->get(index));
 
-      if (result != old_ptr) {
-        delete old_ptr;
+      if (result != OldPtr) {
+        delete OldPtr;
       }
     }
 
     return result;
   }
 
-  Sequence<T> *Map(T (*mapper)(const T &)) const override {
+  Sequence<T> *map(T (*mapper)(const T &)) const override {
     Sequence<T> *result = this->CreateEmpty();
 
     for (int index = 0; index < this->GetLength(); index++) {
-      Sequence<T> *old_ptr = result;
+      Sequence<T> *OldPtr = result;
 
-      result = result->Append(mapper(this->Get(index)));
+      result = result->append(mapper(this->get(index)));
 
-      if (result != old_ptr) {
-        delete old_ptr;
+      if (result != OldPtr) {
+        delete OldPtr;
       }
     }
 
     return result;
   }
 
-  Sequence<T> *Where(bool (*where)(const T &)) const override {
+  Sequence<T> *where(bool (*where)(const T &)) const override {
     Sequence<T> *result = this->CreateEmpty();
 
     for (int index = 0; index < this->GetLength(); index++) {
-      if (where(this->Get(index))) {
-        Sequence<T> *old_ptr = result;
+      if (where(this->get(index))) {
+        Sequence<T> *OldPtr = result;
 
-        result = result->Append(this->Get(index));
+        result = result->append(this->get(index));
 
-        if (result != old_ptr) {
-          delete old_ptr;
+        if (result != OldPtr) {
+          delete OldPtr;
         }
       }
     }

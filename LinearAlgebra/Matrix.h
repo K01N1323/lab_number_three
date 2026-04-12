@@ -6,12 +6,11 @@
 
 template <class T> class Matrix {
 public:
-
   virtual ~Matrix() {}
 
   virtual const T &GetIJ(int row, int col) const = 0;
   virtual void SetIJ(int row, int col, const T &item) = 0;
-  virtual void Set(int index, const T &item) = 0;
+  virtual void set(int index, const T &item) = 0;
 
   virtual int GetRows() const = 0;
   virtual int GetCols() const = 0;
@@ -35,15 +34,14 @@ public:
   virtual Matrix<T> *operator*(const Matrix<T> &rv) const = 0;
   virtual Matrix<T> *operator*(const T scalar) const = 0;
 
-  virtual Matrix<T> *Map(T (*mapper)(const T &)) const = 0;
+  virtual Matrix<T> *map(T (*mapper)(const T &)) const = 0;
 
-  virtual T Reduce(T (*ReduceFunc)(const T &, const T &),
+  virtual T reduce(T (*ReduceFunc)(const T &, const T &),
                    const T &StartValue) const = 0;
 
   virtual IEnumerator<T> *GetEnumerator() const = 0;
 
 protected:
-
   virtual Matrix<T> *CreateEmpty(int rows, int cols) const = 0;
 };
 

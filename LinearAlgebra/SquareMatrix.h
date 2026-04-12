@@ -5,13 +5,29 @@
 #include "BaseMatrix.h"
 
 template <class T> class SquareMatrix : public BaseMatrix<T> {
-public:
-  SquareMatrix(int size) : BaseMatrix<T>(size, size) {
-    this->data = new MutableArraySequence<T>();
-    for (int index = 0; index < size * size; index++) {
-      this->data->Append(T(0));
+private:
+  static Sequence<T> *CreateSquareData(const T *data, int size) {
+    Sequence<T> *result = new MutableArraySequence<T>();
+
+    if (data == nullptr) {
+      for (int count = 0; count < size * size; count++) {
+        result->append(T(0));
+      }
+    } else {
+      for (int count = 0; count < size * size; count++) {
+        result->append(data[count]);
+      }
     }
+
+    return result;
   }
+
+public:
+  SquareMatrix(int size)
+      : BaseMatrix<T>(CreateSquareData(nullptr, size), size, size) {}
+
+  SquareMatrix(const T *data, int size)
+      : BaseMatrix<T>(CreateSquareData(data, size), size, size) {}
 
 protected:
   Matrix<T> *CreateEmpty(int rows, int cols) const override {

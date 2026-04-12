@@ -26,13 +26,13 @@ private:
   T det;
   int swaps;
 
-  int neededrow(int skip) const;
-  void swaprows(int);
-  void divisionrow(int);
-  void subtraction(int);
-  void triangle();
-  void obrat();
-  void reverse();
+  int NeededRow(int skip) const;
+  void SwapRows(int);
+  void DivisionRow(int);
+  void subtraction(int current);
+  void triangle(void);
+  void obrat(void);
+  void reverse(void);
   T GetElement(int, int) const;
 };
 

@@ -17,24 +17,24 @@
 
 using namespace std;
 
-static int tests_passed = 0;
-static int tests_failed = 0;
+static int TestsPassed = 0;
+static int TestsFailed = 0;
 
-static void check(bool condition, const char *test_name) {
+static void check(bool condition, const char *TestName) {
   if (condition) {
-    cout << "  Успешно: " << test_name << "\n";
-    tests_passed++;
+    cout << "  Успешно: " << TestName << "\n";
+    TestsPassed++;
   } else {
-    cout << "  Провалено: " << test_name << "\n";
-    tests_failed++;
+    cout << "  Провалено: " << TestName << "\n";
+    TestsFailed++;
   }
 }
 
-static bool near_eq(double a, double b, double eps = 1e-9) {
+static bool NearEqual(double a, double b, double eps = 1e-9) {
   return fabs(a - b) < eps;
 }
 
-void test_square_matrix() {
+void TestSquareMatrix() {
   cout << "\n Тестирование SquareMatrix \n";
 
   {
@@ -42,9 +42,9 @@ void test_square_matrix() {
     m.SetIJ(0, 0, 1.0);
     m.SetIJ(1, 2, 5.0);
     m.SetIJ(2, 1, -3.0);
-    check(near_eq(m.GetIJ(0, 0), 1.0), "Запись и чтение элемента [0,0]");
-    check(near_eq(m.GetIJ(1, 2), 5.0), "Запись и чтение элемента [1,2]");
-    check(near_eq(m.GetIJ(0, 1), 0.0), "Нулевой элемент по умолчанию");
+    check(NearEqual(m.GetIJ(0, 0), 1.0), "Запись и чтение элемента [0,0]");
+    check(NearEqual(m.GetIJ(1, 2), 5.0), "Запись и чтение элемента [1,2]");
+    check(NearEqual(m.GetIJ(0, 1), 0.0), "Нулевой элемент по умолчанию");
     check(m.GetRows() == 3 && m.GetCols() == 3, "Размеры матрицы корректны");
   }
 
@@ -65,7 +65,7 @@ void test_square_matrix() {
     bool ok = true;
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++)
-        if (!near_eq(m.GetIJ(i, j), (i == j) ? 1.0 : 0.0))
+        if (!NearEqual(m.GetIJ(i, j), (i == j) ? 1.0 : 0.0))
           ok = false;
     check(ok, "MakeOnes формирует единичную матрицу");
   }
@@ -82,7 +82,7 @@ void test_square_matrix() {
     b.SetIJ(1, 0, 7);
     b.SetIJ(1, 1, 8);
     Matrix<double> *c = a + b;
-    check(near_eq(c->GetIJ(0, 0), 6.0) && near_eq(c->GetIJ(1, 1), 12.0),
+    check(NearEqual(c->GetIJ(0, 0), 6.0) && NearEqual(c->GetIJ(1, 1), 12.0),
           "Сложение матриц");
     delete c;
   }
@@ -99,8 +99,8 @@ void test_square_matrix() {
     b.SetIJ(1, 0, 7);
     b.SetIJ(1, 1, 8);
     Matrix<double> *c = a * b;
-    check(near_eq(c->GetIJ(0, 0), 19) && near_eq(c->GetIJ(0, 1), 22) &&
-              near_eq(c->GetIJ(1, 0), 43) && near_eq(c->GetIJ(1, 1), 50),
+    check(NearEqual(c->GetIJ(0, 0), 19) && NearEqual(c->GetIJ(0, 1), 22) &&
+              NearEqual(c->GetIJ(1, 0), 43) && NearEqual(c->GetIJ(1, 1), 50),
           "Умножение матриц");
     delete c;
   }
@@ -112,14 +112,14 @@ void test_square_matrix() {
     m.SetIJ(0, 1, 2);
     m.SetIJ(1, 0, 3);
     m.SetIJ(1, 1, 4);
-    check(near_eq(m.GetDet(), -2.0, 1e-9), "Определитель 2x2");
+    check(NearEqual(m.GetDet(), -2.0, 1e-9), "Определитель 2x2");
   }
 
   {
     // норма Фробениуса единичной матрицы 3x3 = sqrt(3)
     SquareMatrix<double> m(3);
     m.MakeOnes();
-    check(near_eq(m.GetFrobeniusNorm(), sqrt(3.0), 1e-9),
+    check(NearEqual(m.GetFrobeniusNorm(), sqrt(3.0), 1e-9),
           "Норма Фробениуса единичной матрицы");
   }
 
@@ -131,10 +131,10 @@ void test_square_matrix() {
     m.SetIJ(1, 0, 2);
     m.SetIJ(1, 1, -1);
     MutableArraySequence<double> b;
-    b.Append(3.0);
-    b.Append(0.0);
+    b.append(3.0);
+    b.append(0.0);
     Sequence<double> *x = m.SolveSlauGauss(&b);
-    check(near_eq(x->Get(0), 1.0) && near_eq(x->Get(1), 2.0),
+    check(NearEqual(x->get(0), 1.0) && NearEqual(x->get(1), 2.0),
           "Решение СЛАУ методом Гаусса");
     delete x;
   }
@@ -147,10 +147,10 @@ void test_square_matrix() {
     m.SetIJ(1, 0, 2);
     m.SetIJ(1, 1, -1);
     MutableArraySequence<double> b;
-    b.Append(3.0);
-    b.Append(0.0);
+    b.append(3.0);
+    b.append(0.0);
     Sequence<double> *x = m.SolveSlauLU(&b);
-    check(near_eq(x->Get(0), 1.0) && near_eq(x->Get(1), 2.0),
+    check(NearEqual(x->get(0), 1.0) && NearEqual(x->get(1), 2.0),
           "Решение СЛАУ методом LU");
     delete x;
   }
@@ -163,13 +163,13 @@ void test_square_matrix() {
     m.SetIJ(1, 0, 3);
     m.SetIJ(1, 1, 4);
     Matrix<double> *inv = m.GetInverseMatrix();
-    check(near_eq(inv->GetIJ(0, 0), -2.0) && near_eq(inv->GetIJ(1, 0), 1.5),
+    check(NearEqual(inv->GetIJ(0, 0), -2.0) && NearEqual(inv->GetIJ(1, 0), 1.5),
           "Обратная матрица");
     delete inv;
   }
 }
 
-void test_rectangular_matrix() {
+void TestRectangularMatrix() {
   cout << "\nТестирование RectangularMatrix \n";
 
   {
@@ -187,7 +187,7 @@ void test_rectangular_matrix() {
   }
 }
 
-void test_diagonal_matrix() {
+void TestDiagonalMatrix() {
   cout << "\n Тестирование DiagonalMatrix \n";
 
   {
@@ -195,9 +195,9 @@ void test_diagonal_matrix() {
     m.SetIJ(0, 0, 2.0);
     m.SetIJ(1, 1, 5.0);
     m.SetIJ(2, 2, -1.0);
-    check(near_eq(m.GetIJ(0, 0), 2.0) && near_eq(m.GetIJ(1, 1), 5.0),
+    check(NearEqual(m.GetIJ(0, 0), 2.0) && NearEqual(m.GetIJ(1, 1), 5.0),
           "Чтение диагональных элементов");
-    check(near_eq(m.GetIJ(0, 1), 0.0) && near_eq(m.GetIJ(2, 0), 0.0),
+    check(NearEqual(m.GetIJ(0, 1), 0.0) && NearEqual(m.GetIJ(2, 0), 0.0),
           "Внедиагональные элементы равны нулю");
   }
 
@@ -218,11 +218,11 @@ void test_diagonal_matrix() {
     m.SetIJ(0, 0, 2);
     m.SetIJ(1, 1, 3);
     m.SetIJ(2, 2, 4);
-    check(near_eq(m.GetDet(), 24.0, 1e-7), "Определитель диагональной матрицы");
+    check(NearEqual(m.GetDet(), 24.0, 1e-7), "Определитель диагональной матрицы");
   }
 }
 
-void test_upper_triangular_matrix() {
+void TestUpperTriangularMatrix() {
   cout << "\n Тестирование UpperTriangularMatrix \n";
 
   {
@@ -233,9 +233,9 @@ void test_upper_triangular_matrix() {
     m.SetIJ(1, 1, 4);
     m.SetIJ(1, 2, 5);
     m.SetIJ(2, 2, 6);
-    check(near_eq(m.GetIJ(1, 1), 4.0) && near_eq(m.GetIJ(0, 2), 3.0),
+    check(NearEqual(m.GetIJ(1, 1), 4.0) && NearEqual(m.GetIJ(0, 2), 3.0),
           "Чтение надиагональных элементов");
-    check(near_eq(m.GetIJ(1, 0), 0.0) && near_eq(m.GetIJ(2, 0), 0.0),
+    check(NearEqual(m.GetIJ(1, 0), 0.0) && NearEqual(m.GetIJ(2, 0), 0.0),
           "Поддиагональные элементы равны нулю");
   }
 
@@ -251,7 +251,7 @@ void test_upper_triangular_matrix() {
   }
 }
 
-void test_lower_triangular_matrix() {
+void TestLowerTriangularMatrix() {
   cout << "\n Тестирование LowerTriangularMatrix \n";
 
   {
@@ -260,9 +260,9 @@ void test_lower_triangular_matrix() {
     m.SetIJ(1, 0, 2);
     m.SetIJ(1, 1, 3);
     m.SetIJ(2, 2, 4);
-    check(near_eq(m.GetIJ(1, 0), 2.0) && near_eq(m.GetIJ(2, 2), 4.0),
+    check(NearEqual(m.GetIJ(1, 0), 2.0) && NearEqual(m.GetIJ(2, 2), 4.0),
           "Чтение поддиагональных элементов");
-    check(near_eq(m.GetIJ(0, 1), 0.0) && near_eq(m.GetIJ(0, 2), 0.0),
+    check(NearEqual(m.GetIJ(0, 1), 0.0) && NearEqual(m.GetIJ(0, 2), 0.0),
           "Надиагональные элементы равны нулю");
   }
 
@@ -278,7 +278,7 @@ void test_lower_triangular_matrix() {
   }
 }
 
-void test_immutable_matrix() {
+void TestImmutableMatrix() {
   cout << "\n Тестирование ImmutableMatrix \n";
 
   {
@@ -286,7 +286,7 @@ void test_immutable_matrix() {
     base->SetIJ(0, 0, 7.0);
     base->SetIJ(1, 1, 3.0);
     ImmutableMatrix<double> im(base);
-    check(near_eq(im.GetIJ(0, 0), 7.0) && near_eq(im.GetIJ(1, 1), 3.0),
+    check(NearEqual(im.GetIJ(0, 0), 7.0) && NearEqual(im.GetIJ(1, 1), 3.0),
           "Чтение элементов через ImmutableMatrix");
   }
 
@@ -302,7 +302,7 @@ void test_immutable_matrix() {
   }
 }
 
-void test_gauss_method() {
+void TestGaussMethod() {
   cout << "\n Тестирование GaussMethod\n";
 
   {
@@ -313,11 +313,11 @@ void test_gauss_method() {
     m.SetIJ(1, 0, 1);
     m.SetIJ(1, 1, 2);
     MutableArraySequence<double> b;
-    b.Append(9.0);
-    b.Append(8.0);
+    b.append(9.0);
+    b.append(8.0);
     GaussMethod<double> g(&m);
     Sequence<double> *x = g.Solve(&b);
-    check(near_eq(x->Get(0), 2.0) && near_eq(x->Get(1), 3.0), "Решение СЛАУ");
+    check(NearEqual(x->get(0), 2.0) && NearEqual(x->get(1), 3.0), "Решение СЛАУ");
     delete x;
   }
 
@@ -329,7 +329,7 @@ void test_gauss_method() {
     m.SetIJ(1, 1, 2);
     GaussMethod<double> g(&m);
     g.TakeReverse();
-    check(near_eq(g.GetDet(), 5.0, 1e-9), "Вычисление определителя");
+    check(NearEqual(g.GetDet(), 5.0, 1e-9), "Вычисление определителя");
   }
 
   {
@@ -342,14 +342,14 @@ void test_gauss_method() {
     GaussMethod<double> g(&m);
     g.TakeReverse();
     Matrix<double> *inv = g.GetInverseMatrix();
-    check(near_eq(inv->GetIJ(0, 0), 3.0 / 5) &&
-              near_eq(inv->GetIJ(1, 0), -1.0 / 5),
+    check(NearEqual(inv->GetIJ(0, 0), 3.0 / 5) &&
+              NearEqual(inv->GetIJ(1, 0), -1.0 / 5),
           "Обратная матрица");
     delete inv;
   }
 }
 
-void test_lu_decompozition() {
+void TestLUDecompozition() {
   cout << "\n Тестирование LUDecompozition \n";
 
   {
@@ -360,11 +360,11 @@ void test_lu_decompozition() {
     m.SetIJ(1, 0, 1);
     m.SetIJ(1, 1, 2);
     MutableArraySequence<double> b;
-    b.Append(9.0);
-    b.Append(8.0);
+    b.append(9.0);
+    b.append(8.0);
     LUDecompozition<double> lu(&m);
     Sequence<double> *x = lu.Solve(&b);
-    check(near_eq(x->Get(0), 2.0) && near_eq(x->Get(1), 3.0), "Решение СЛАУ");
+    check(NearEqual(x->get(0), 2.0) && NearEqual(x->get(1), 3.0), "Решение СЛАУ");
     delete x;
   }
 
@@ -375,7 +375,7 @@ void test_lu_decompozition() {
     m.SetIJ(1, 0, 1);
     m.SetIJ(1, 1, 2);
     LUDecompozition<double> lu(&m);
-    check(near_eq(lu.GetDet(), 5.0, 1e-9), "Вычисление определителя");
+    check(NearEqual(lu.GetDet(), 5.0, 1e-9), "Вычисление определителя");
   }
 
   {
@@ -385,17 +385,17 @@ void test_lu_decompozition() {
     LUDecompozition<double> lu(&m);
     Matrix<double> *L = lu.GetL();
     Matrix<double> *U = lu.GetU();
-    bool l_ok = true, u_ok = true;
+    bool lOk = true, uOk = true;
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++) {
         double e = (i == j) ? 1.0 : 0.0;
-        if (!near_eq(L->GetIJ(i, j), e))
-          l_ok = false;
-        if (!near_eq(U->GetIJ(i, j), e))
-          u_ok = false;
+        if (!NearEqual(L->GetIJ(i, j), e))
+          lOk = false;
+        if (!NearEqual(U->GetIJ(i, j), e))
+          uOk = false;
       }
-    check(l_ok, "Матрица L для единичной матрицы корректна");
-    check(u_ok, "Матрица U для единичной матрицы корректна");
+    check(lOk, "Матрица L для единичной матрицы корректна");
+    check(uOk, "Матрица U для единичной матрицы корректна");
   }
 
   {
@@ -410,14 +410,14 @@ void test_lu_decompozition() {
   }
 }
 
-void test_partial_ordering() {
+void TestPartialOrdering() {
   cout << "\n Тестирование PartialOrdering \n";
 
   {
     // Отношение: 1 <= 2, 2 <= 3
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
-    pairs.Append({2, 3});
+    pairs.append({1, 2});
+    pairs.append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 2) && po.IsLessOrEqual(2, 3),
           "Прямые дуги отношения");
@@ -426,8 +426,8 @@ void test_partial_ordering() {
   {
     // Транзитивно: 1 <= 3 должно выполняться
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
-    pairs.Append({2, 3});
+    pairs.append({1, 2});
+    pairs.append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 3), "Транзитивная дуга 1 <= 3");
   }
@@ -435,7 +435,7 @@ void test_partial_ordering() {
   {
     // Рефлексивность: каждый элемент <= себя
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
+    pairs.append({1, 2});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 1) && po.IsLessOrEqual(2, 2),
           "Рефлексивность отношения");
@@ -444,8 +444,8 @@ void test_partial_ordering() {
   {
     // Антисимметрия: 3 не должен быть <= 1
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
-    pairs.Append({2, 3});
+    pairs.append({1, 2});
+    pairs.append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(!po.IsLessOrEqual(3, 1) && !po.IsLessOrEqual(2, 1),
           "Отсутствие обратного отношения");
@@ -454,8 +454,8 @@ void test_partial_ordering() {
   {
     // Цепь {1,2},{2,3} — транзитивное замыкание даёт 6 дуг (с рефлексивными)
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
-    pairs.Append({2, 3});
+    pairs.append({1, 2});
+    pairs.append({2, 3});
     PartialOrdering<int> po(&pairs);
     Sequence<Pair<int>> *edges = po.GetMaterializedEdges();
     int count = edges->GetLength();
@@ -467,10 +467,10 @@ void test_partial_ordering() {
   {
     // Длинная цепь: 1->2->3->4->5, транзитивно 1<=5
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
-    pairs.Append({2, 3});
-    pairs.Append({3, 4});
-    pairs.Append({4, 5});
+    pairs.append({1, 2});
+    pairs.append({2, 3});
+    pairs.append({3, 4});
+    pairs.append({4, 5});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 5) && po.IsLessOrEqual(1, 4),
           "Транзитивность в длинной цепи");
@@ -480,7 +480,7 @@ void test_partial_ordering() {
 
   {
     MutableArraySequence<Pair<int>> pairs;
-    pairs.Append({1, 2});
+    pairs.append({1, 2});
     PartialOrdering<int> po(&pairs);
     bool threw = false;
     try {
@@ -492,25 +492,25 @@ void test_partial_ordering() {
   }
 }
 
-void run_all_tests() {
-  tests_passed = 0;
-  tests_failed = 0;
+void RunAllTests() {
+  TestsPassed = 0;
+  TestsFailed = 0;
 
-  test_square_matrix();
-  test_rectangular_matrix();
-  test_diagonal_matrix();
-  test_upper_triangular_matrix();
-  test_lower_triangular_matrix();
-  test_immutable_matrix();
-  test_gauss_method();
-  test_lu_decompozition();
-  test_partial_ordering();
+  TestSquareMatrix();
+  TestRectangularMatrix();
+  TestDiagonalMatrix();
+  TestUpperTriangularMatrix();
+  TestLowerTriangularMatrix();
+  TestImmutableMatrix();
+  TestGaussMethod();
+  TestLUDecompozition();
+  TestPartialOrdering();
 
   cout << " Результаты тестов \n";
-  cout << "Пройдено:  " << tests_passed << "\n";
-  cout << "Провалено: " << tests_failed << "\n";
+  cout << "Пройдено:  " << TestsPassed << "\n";
+  cout << "Провалено: " << TestsFailed << "\n";
 
-  if (tests_failed == 0) {
+  if (TestsFailed == 0) {
     cout << "Все тесты успешно пройдены!\n";
   } else {
     cout << "Были обнаружены ошибки.\n";
