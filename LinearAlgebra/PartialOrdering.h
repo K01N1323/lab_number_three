@@ -20,7 +20,7 @@ private:
 
   int GetIndex(const T &item) const {
     for (int index = 0; index < Elements->GetLength(); index++) {
-      if (Elements->get(index) == item) {
+      if (Elements->Get(index) == item) {
         return index;
       }
     }
@@ -74,23 +74,23 @@ public:
 
     // Собираем уникальные элементы из всех пар
     for (int number = 0; number < pairs->GetLength(); number++) {
-      T FirstItem = pairs->get(number).First;
-      T SecondItem = pairs->get(number).Second;
+      T FirstItem = pairs->Get(number).First;
+      T SecondItem = pairs->Get(number).Second;
 
       bool IsFirstFound = false;
       bool IsSecondFound = false;
 
       for (int index = 0; index < Elements->GetLength(); index++) {
-        if (Elements->get(index) == FirstItem)
+        if (Elements->Get(index) == FirstItem)
           IsFirstFound = true;
-        if (Elements->get(index) == SecondItem)
+        if (Elements->Get(index) == SecondItem)
           IsSecondFound = true;
       }
 
       if (!IsFirstFound)
-        Elements->append(FirstItem);
+        Elements->Append(FirstItem);
       if (!IsSecondFound)
-        Elements->append(SecondItem);
+        Elements->Append(SecondItem);
     }
 
     int n = Elements->GetLength();
@@ -100,8 +100,8 @@ public:
 
     // Заполняем матрицу смежности по переданным парам
     for (int number = 0; number < pairs->GetLength(); number++) {
-      int row = GetIndex(pairs->get(number).First);
-      int col = GetIndex(pairs->get(number).Second);
+      int row = GetIndex(pairs->Get(number).First);
+      int col = GetIndex(pairs->Get(number).Second);
 
       if (row != -1 && col != -1) {
         GraphMatrix->SetIJ(row, col, 1);
@@ -132,9 +132,9 @@ public:
       for (int col = 0; col < n; col++) {
         if (ClosureMatrix->GetIJ(row, col) > 0) {
           Pair<T> NewPair;
-          NewPair.First = Elements->get(row);
-          NewPair.Second = Elements->get(col);
-          result->append(NewPair);
+          NewPair.First = Elements->Get(row);
+          NewPair.Second = Elements->Get(col);
+          result->Append(NewPair);
         }
       }
     }

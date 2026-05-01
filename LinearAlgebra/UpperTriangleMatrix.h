@@ -12,11 +12,11 @@ private:
 
     if (data == nullptr) {
       for (int index = 0; index < size * (size + 1) / 2; index++) {
-        result->append(T(0));
+        result->Append(T(0));
       }
     } else {
       for (int count = 0; count < size * (size + 1) / 2; count++) {
-        result->append(data[count]);
+        result->Append(data[count]);
       }
     }
 
@@ -39,7 +39,7 @@ public:
     int n = this->rows;
     int index = (row * (2 * n - row + 1)) / 2 + (col - row);
 
-    return this->data->get(index);
+    return this->data->Get(index);
   }
 
   void SetIJ(int row, int col, const T &item) override {
@@ -53,7 +53,7 @@ public:
     int n = this->rows;
     int index = (row * (2 * n - row + 1)) / 2 + (col - row);
 
-    this->data->set(index, item);
+    this->data->Set(index, item);
   }
 
 protected:

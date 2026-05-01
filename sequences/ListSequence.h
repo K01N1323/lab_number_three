@@ -1,20 +1,21 @@
 #ifndef LIST_SEQUENCE_H
 #define LIST_SEQUENCE_H
-#ifndef LISTSEQUENCE_H
-#define LISTSEQUENCE_H
 
 #include <stdexcept>
 
-#include "../BaseStructures/LinkedList.h"
+#include "LinkedList.h"
 #include "Sequence.h"
 
+// Абстрактный базовый класс для последовательностей на основе связного списка
 template <class T> class ListSequence : public Sequence<T> {
 protected:
-  LinkedList<T> *items;
+  LinkedList<T> *items; // Указатель на внутренний связный список
 
 public:
+  // Конструктор по умолчанию: создает пустую последовательность
   ListSequence() { this->items = new LinkedList<T>(); }
 
+  // Конструктор: создает последовательность из массива элементов
   ListSequence(T *items, int count) {
     if (items == nullptr) {
       this->items = new LinkedList<T>();
@@ -23,113 +24,114 @@ public:
     }
   }
 
+  // Конструктор копирования
   ListSequence(const ListSequence<T> &other) {
     this->items = new LinkedList<T>(*other.items);
   }
 
+  // Конструктор: создает последовательность на основе переданного списка
   ListSequence(const LinkedList<T> &list) {
     this->items = new LinkedList<T>(list);
   }
 
+  // Деструктор: освобождает выделенную память
   virtual ~ListSequence() override { delete this->items; }
 
-  virtual ListSequence<T> *instance() override = 0;
+  // Создает экземпляр текущего типа
+  virtual ListSequence<T> *Instance() override = 0;
 
+  // Создает пустую последовательность текущего типа
   virtual ListSequence<T> *CreateEmpty() const override = 0;
 
+  // Возвращает первый элемент последовательности
   const T &GetFirst() const override { return this->items->GetFirst(); }
 
+  // Возвращает последний элемент последовательности
   const T &GetLast() const override { return this->items->GetLast(); }
 
-  const T &get(int index) const override { return this->items->get(index); }
+  // Получает элемент по индексу
+  const T &Get(int index) const override { return this->items->Get(index); }
 
+  // Устанавливает значение элемента по индексу
+  void Set(int index, const T &value) override { this->items->Set(index, value); }
+
+  // Возвращает длину последовательности
   int GetLength() const override { return this->items->GetLength(); }
 
+  // Возвращает итератор для обхода последовательности
   IEnumerator<T> *GetEnumerator() const override {
     return this->items->GetEnumerator();
   }
 
-  Sequence<T> *append(T item) override {
-    ListSequence<T> *target = this->instance();
+  // Добавляет элемент в конец последовательности
+  Sequence<T> *Append(const T &item) override {
+    ListSequence<T> *target = this->Instance();
 
-    target->items->append(item);
-
-    return target;
-  }
-
-  Sequence<T> *prepend(T item) override {
-    ListSequence<T> *target = this->instance();
-
-    target->items->prepend(item);
+    target->items->Append(item);
 
     return target;
   }
 
-  Sequence<T> *InsertAt(T item, int index) override {
-    ListSequence<T> *target = this->instance();
+  // Добавляет элемент в начало последовательности
+  Sequence<T> *Prepend(const T &item) override {
+    ListSequence<T> *target = this->Instance();
+
+    target->items->Prepend(item);
+
+    return target;
+  }
+
+  // Вставляет элемент по заданному индексу
+  Sequence<T> *InsertAt(const T &item, int index) override {
+    ListSequence<T> *target = this->Instance();
 
     target->items->InsertAt(item, index);
 
     return target;
   }
-  // сеттер по индексу
-  void set(int index, const T &item) override { this->items->set(index, item); }
 
-  Sequence<T> *concat(Sequence<T> *list) override {
-    ListSequence<T> *NewList = this->CreateEmpty();
+  // Возвращает новую последовательность, являющуюся конкатенацией текущей и
+  // переданной
+  Sequence<T> *Concat(Sequence<T> *list) override {
+    ListSequence<T> *new_list = this->CreateEmpty();
 
-    for (int i = 0; i < this->GetLength(); i++) {
-      NewList->items->append(this->get(i));
+    // Обход текущего списка через итератор (O(N) вместо O(N^2))
+    IEnumerator<T> *it_self = this->GetEnumerator();
+    if (it_self != nullptr) {
+      while (it_self->HasNext()) {
+        new_list->items->Append(it_self->GetCurrent());
+        it_self->MoveNext();
+      }
+      delete it_self;
     }
 
+    // Обход переданного списка через итератор
     IEnumerator<T> *it = list->GetEnumerator();
     if (it != nullptr) {
       while (it->HasNext()) {
-        NewList->items->append(it->GetCurrent());
+        new_list->items->Append(it->GetCurrent());
         it->MoveNext();
       }
       delete it;
     } else {
       for (int i = 0; i < list->GetLength(); i++) {
-        NewList->items->append(list->get(i));
+        new_list->items->Append(list->Get(i));
       }
     }
 
-    return NewList;
+    return new_list;
   }
 
-  Sequence<T> *GetSubsequence(int StartIndex, int EndIndex) const override {
-    LinkedList<T> *RawList = this->items->GetSubList(StartIndex, EndIndex);
-    ListSequence<T> *NewList = this->CreateEmpty();
+  // Возвращает подпоследовательность по заданным индексам
+  Sequence<T> *GetSubsequence(int start_index, int end_index) const override {
+    LinkedList<T> *raw_list = this->items->GetSubList(start_index, end_index);
+    ListSequence<T> *new_list = this->CreateEmpty();
 
-    delete NewList->items;
-    NewList->items = RawList;
+    delete new_list->items;
+    new_list->items = raw_list;
 
-    return NewList;
-  }
-
-  Sequence<T> *map(T (*mapper)(const T &)) const override {
-    ListSequence<T> *NewList = this->CreateEmpty();
-
-    for (int index = 0; index < this->GetLength(); index++) {
-      NewList->items->append(mapper(this->get(index)));
-    }
-
-    return NewList;
-  }
-
-  Sequence<T> *where(bool (*where)(const T &)) const override {
-    ListSequence<T> *NewList = this->CreateEmpty();
-
-    for (int index = 0; index < this->GetLength(); index++) {
-      if (where(this->get(index))) {
-        NewList->items->append(this->get(index));
-      }
-    }
-
-    return NewList;
+    return new_list;
   }
 };
 
 #endif // LISTSEQUENCE_H
-#endif // LIST_SEQUENCE_H

@@ -3,58 +3,63 @@
 
 #include <stdexcept>
 
-#include "../Sequences/IEnumerator.h"
+#include "IEnumerator.h"
 
+// Шаблонный класс односвязного списка
 template <class T> class LinkedList {
 private:
+  // Внутренняя структура узла списка
   struct Node {
     T data;
     Node *next;
 
-    Node(T value) {
+    Node(const T &value) {
       this->data = value;
       this->next = nullptr;
     }
   };
 
-  Node *head;
-  Node *tail;
-  int size;
+  Node *head; // Указатель на начало списка
+  Node *tail; // Указатель на конец списка
+  int size;   // Текущий размер списка
 
 public:
+  // Конструктор по умолчанию: создает пустой список
   LinkedList() : LinkedList(nullptr, 0) {}
 
+  // Конструктор: создает список из массива элементов
   LinkedList(T *items, int count) {
     this->head = nullptr;
     this->tail = nullptr;
     this->size = 0;
 
     for (int index = 0; index < count; index++) {
-      Node *NewNode = new Node(items[index]);
+      Node *new_node = new Node(items[index]);
 
       if (head == nullptr) {
-        head = NewNode;
-        tail = NewNode;
+        head = new_node;
+        tail = new_node;
       } else {
-        tail->next = NewNode;
-        tail = NewNode;
+        tail->next = new_node;
+        tail = new_node;
       }
       size++;
     }
   }
 
+  // Конструктор копирования
   LinkedList(const LinkedList<T> &list) : LinkedList() {
     Node *current = list.head;
 
     while (current != nullptr) {
-      Node *NewNode = new Node(current->data);
+      Node *new_node = new Node(current->data);
 
       if (head == nullptr) {
-        head = NewNode;
-        tail = NewNode;
+        head = new_node;
+        tail = new_node;
       } else {
-        tail->next = NewNode;
-        tail = NewNode;
+        tail->next = new_node;
+        tail = new_node;
       }
 
       current = current->next;
@@ -63,6 +68,7 @@ public:
     this->size = list.size;
   }
 
+  // Возвращает первый элемент списка
   const T &GetFirst() const {
     if (head == nullptr) {
       throw std::out_of_range("Первого элемента не существует");
@@ -71,6 +77,7 @@ public:
     return head->data;
   }
 
+  // Возвращает последний элемент списка
   const T &GetLast() const {
     if (tail == nullptr) {
       throw std::out_of_range("Последнего элемента не существует");
@@ -79,7 +86,8 @@ public:
     return tail->data;
   }
 
-  const T &get(int index) const {
+  // Возвращает элемент по индексу
+  const T &Get(int index) const {
     if (index >= size || index < 0) {
       throw std::out_of_range("Элемента с таким индексом не существует");
     }
@@ -93,128 +101,156 @@ public:
     return current->data;
   }
 
-  LinkedList<T> *GetSubList(int StartIndex, int EndIndex) {
-    if (StartIndex < 0 || EndIndex < 0 || EndIndex >= size ||
-        StartIndex >= size || EndIndex < StartIndex) {
+  // Устанавливает значение элемента по индексу
+  void Set(int index, const T &value) {
+    if (index >= size || index < 0) {
+      throw std::out_of_range("Элемента с таким индексом не существует");
+    }
+
+    Node *current = head;
+
+    for (int ind = 0; ind < index; ind++) {
+      current = current->next;
+    }
+
+    current->data = value;
+  }
+
+  // Возвращает подсписок по заданным индексам
+  LinkedList<T> *GetSubList(int start_index, int end_index) {
+    if (start_index < 0 || end_index < 0 || end_index >= size ||
+        start_index >= size || end_index < start_index) {
       throw std::out_of_range("Индексы невалидны для данного списка");
     }
 
-    LinkedList<T> *SubList = new LinkedList<T>();
+    LinkedList<T> *sub_list = new LinkedList<T>();
     Node *current = this->head;
 
-    for (int index = 0; index < StartIndex; index++) {
+    for (int index = 0; index < start_index; index++) {
       current = current->next;
     }
 
-    Node **CurrentPtr = &(SubList->head);
+    Node **current_ptr = &(sub_list->head);
 
-    for (int index = StartIndex; index <= EndIndex; index++) {
-      Node *NewNode = new Node(current->data);
+    for (int index = start_index; index <= end_index; index++) {
+      Node *new_node = new Node(current->data);
 
-      *CurrentPtr = NewNode;
-      CurrentPtr = &(NewNode->next);
+      *current_ptr = new_node;
+      current_ptr = &(new_node->next);
 
-      SubList->tail = NewNode;
-      SubList->size++;
+      sub_list->tail = new_node;
+      sub_list->size++;
 
       current = current->next;
     }
 
-    return SubList;
+    return sub_list;
   }
 
+  // Возвращает текущую длину списка
   int GetLength() const { return size; }
 
-  void append(T item) {
-    Node *NewNode = new Node(item);
+  // Добавляет элемент в конец списка
+  void Append(const T &item) {
+    Node *new_node = new Node(item);
 
     if (head == nullptr) {
-      head = NewNode;
-      tail = NewNode;
+      head = new_node;
+      tail = new_node;
     } else {
-      tail->next = NewNode;
-      tail = NewNode;
+      tail->next = new_node;
+      tail = new_node;
     }
 
     size++;
   }
 
-  void prepend(T item) {
-    Node *NewNode = new Node(item);
+  // Добавляет элемент в начало списка
+  void Prepend(const T &item) {
+    Node *new_node = new Node(item);
 
     if (this->head == nullptr) {
-      this->head = NewNode;
-      this->tail = NewNode;
+      this->head = new_node;
+      this->tail = new_node;
     } else {
-      NewNode->next = this->head;
-      this->head = NewNode;
+      new_node->next = this->head;
+      this->head = new_node;
     }
 
     size++;
   }
 
-  void InsertAt(T item, int index) {
+  // Вставляет элемент по заданному индексу
+  void InsertAt(const T &item, int index) {
     if (index >= size || index < 0) {
       throw std::out_of_range("Индекс вне списка");
     }
 
     if (index == 0) {
-      prepend(item);
+      Prepend(item);
       return;
     }
 
-    Node *NewNode = new Node(item);
+    Node *new_node = new Node(item);
     Node *current = head;
 
     for (int ind = 0; ind < (index - 1); ind++) {
       current = current->next;
     }
 
-    NewNode->next = current->next;
-    current->next = NewNode;
+    new_node->next = current->next;
+    current->next = new_node;
     size++;
   }
 
-  LinkedList<T> *concat(LinkedList<T> *list) {
-    LinkedList<T> *SubList = new LinkedList<T>(*this);
+  // Возвращает новый список, являющийся конкатенацией текущего и переданного
+  LinkedList<T> *Concat(LinkedList<T> *list) {
+    LinkedList<T> *sub_list = new LinkedList<T>(*this);
     Node *current = list->head;
 
     for (int index = 0; index < list->size; index++) {
-      SubList->append(current->data);
+      sub_list->Append(current->data);
       current = current->next;
     }
 
-    return SubList;
+    return sub_list;
   }
 
+  // Деструктор: освобождает память всех узлов
   ~LinkedList() {
     Node *current = this->head;
 
     while (current != nullptr) {
-      Node *LocalCurrent = current->next;
+      Node *local_current = current->next;
       delete current;
-      current = LocalCurrent;
+      current = local_current;
     }
   }
 
+  // Итератор для связного списка
   class LinkedListEnumerator : public IEnumerator<T> {
   private:
     Node *current;
 
   public:
+    // Конструктор итератора
     LinkedListEnumerator(Node *head) { current = head; }
 
+    // Возвращает текущий элемент
     const T &GetCurrent() const override { return current->data; }
 
+    // Переходит к следующему элементу
     void MoveNext() override {
       if (current != nullptr) {
         current = current->next;
       }
     }
 
+    // Проверяет, есть ли следующий элемент
     bool HasNext() const override { return current != nullptr; }
   };
 
+  // Возвращает итератор для обхода списка
   IEnumerator<T> *GetEnumerator() const {
     return new LinkedListEnumerator(this->head);
   }

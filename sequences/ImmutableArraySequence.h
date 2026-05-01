@@ -3,21 +3,29 @@
 
 #include "ArraySequence.h"
 
+// Неизменяемая последовательность на основе массива
 template <class T> class ImmutableArraySequence : public ArraySequence<T> {
 public:
-    ImmutableArraySequence() : ArraySequence<T>() {}
-    
-    ImmutableArraySequence(T *items, int count) : ArraySequence<T>(items, count) {}
-    
-    ImmutableArraySequence(const ImmutableArraySequence<T> &other) : ArraySequence<T>(other) {}
+  // Конструктор по умолчанию
+  ImmutableArraySequence() : ArraySequence<T>() {}
 
-    ImmutableArraySequence<T> *instance() override {
-        return new ImmutableArraySequence<T>(*this);
-    }
+  // Конструктор копирования элементов
+  ImmutableArraySequence(T *items, int count)
+      : ArraySequence<T>(items, count) {}
 
-    ImmutableArraySequence<T> *CreateEmpty() const override {
-        return new ImmutableArraySequence<T>();
-    }
+  // Конструктор копирования
+  ImmutableArraySequence(const ImmutableArraySequence<T> &other)
+      : ArraySequence<T>(other) {}
+
+  // Возвращает копию текущего объекта для избежания изменения оригинала
+  ImmutableArraySequence<T> *Instance() override {
+    return new ImmutableArraySequence<T>(*this);
+  }
+
+  // Создает новую пустую неизменяемую последовательность
+  ImmutableArraySequence<T> *CreateEmpty() const override {
+    return new ImmutableArraySequence<T>();
+  }
 };
 
 #endif // IMMUTABLEARRAYSEQUENCE_H

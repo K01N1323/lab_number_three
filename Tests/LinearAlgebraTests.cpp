@@ -131,10 +131,10 @@ void TestSquareMatrix() {
     m.SetIJ(1, 0, 2);
     m.SetIJ(1, 1, -1);
     MutableArraySequence<double> b;
-    b.append(3.0);
-    b.append(0.0);
+    b.Append(3.0);
+    b.Append(0.0);
     Sequence<double> *x = m.SolveSlauGauss(&b);
-    check(NearEqual(x->get(0), 1.0) && NearEqual(x->get(1), 2.0),
+    check(NearEqual(x->Get(0), 1.0) && NearEqual(x->Get(1), 2.0),
           "Решение СЛАУ методом Гаусса");
     delete x;
   }
@@ -147,10 +147,10 @@ void TestSquareMatrix() {
     m.SetIJ(1, 0, 2);
     m.SetIJ(1, 1, -1);
     MutableArraySequence<double> b;
-    b.append(3.0);
-    b.append(0.0);
+    b.Append(3.0);
+    b.Append(0.0);
     Sequence<double> *x = m.SolveSlauLU(&b);
-    check(NearEqual(x->get(0), 1.0) && NearEqual(x->get(1), 2.0),
+    check(NearEqual(x->Get(0), 1.0) && NearEqual(x->Get(1), 2.0),
           "Решение СЛАУ методом LU");
     delete x;
   }
@@ -313,11 +313,11 @@ void TestGaussMethod() {
     m.SetIJ(1, 0, 1);
     m.SetIJ(1, 1, 2);
     MutableArraySequence<double> b;
-    b.append(9.0);
-    b.append(8.0);
+    b.Append(9.0);
+    b.Append(8.0);
     GaussMethod<double> g(&m);
     Sequence<double> *x = g.Solve(&b);
-    check(NearEqual(x->get(0), 2.0) && NearEqual(x->get(1), 3.0), "Решение СЛАУ");
+    check(NearEqual(x->Get(0), 2.0) && NearEqual(x->Get(1), 3.0), "Решение СЛАУ");
     delete x;
   }
 
@@ -360,11 +360,11 @@ void TestLUDecompozition() {
     m.SetIJ(1, 0, 1);
     m.SetIJ(1, 1, 2);
     MutableArraySequence<double> b;
-    b.append(9.0);
-    b.append(8.0);
+    b.Append(9.0);
+    b.Append(8.0);
     LUDecompozition<double> lu(&m);
     Sequence<double> *x = lu.Solve(&b);
-    check(NearEqual(x->get(0), 2.0) && NearEqual(x->get(1), 3.0), "Решение СЛАУ");
+    check(NearEqual(x->Get(0), 2.0) && NearEqual(x->Get(1), 3.0), "Решение СЛАУ");
     delete x;
   }
 
@@ -416,8 +416,8 @@ void TestPartialOrdering() {
   {
     // Отношение: 1 <= 2, 2 <= 3
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
-    pairs.append({2, 3});
+    pairs.Append({1, 2});
+    pairs.Append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 2) && po.IsLessOrEqual(2, 3),
           "Прямые дуги отношения");
@@ -426,8 +426,8 @@ void TestPartialOrdering() {
   {
     // Транзитивно: 1 <= 3 должно выполняться
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
-    pairs.append({2, 3});
+    pairs.Append({1, 2});
+    pairs.Append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 3), "Транзитивная дуга 1 <= 3");
   }
@@ -435,7 +435,7 @@ void TestPartialOrdering() {
   {
     // Рефлексивность: каждый элемент <= себя
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
+    pairs.Append({1, 2});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 1) && po.IsLessOrEqual(2, 2),
           "Рефлексивность отношения");
@@ -444,8 +444,8 @@ void TestPartialOrdering() {
   {
     // Антисимметрия: 3 не должен быть <= 1
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
-    pairs.append({2, 3});
+    pairs.Append({1, 2});
+    pairs.Append({2, 3});
     PartialOrdering<int> po(&pairs);
     check(!po.IsLessOrEqual(3, 1) && !po.IsLessOrEqual(2, 1),
           "Отсутствие обратного отношения");
@@ -454,8 +454,8 @@ void TestPartialOrdering() {
   {
     // Цепь {1,2},{2,3} — транзитивное замыкание даёт 6 дуг (с рефлексивными)
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
-    pairs.append({2, 3});
+    pairs.Append({1, 2});
+    pairs.Append({2, 3});
     PartialOrdering<int> po(&pairs);
     Sequence<Pair<int>> *edges = po.GetMaterializedEdges();
     int count = edges->GetLength();
@@ -467,10 +467,10 @@ void TestPartialOrdering() {
   {
     // Длинная цепь: 1->2->3->4->5, транзитивно 1<=5
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
-    pairs.append({2, 3});
-    pairs.append({3, 4});
-    pairs.append({4, 5});
+    pairs.Append({1, 2});
+    pairs.Append({2, 3});
+    pairs.Append({3, 4});
+    pairs.Append({4, 5});
     PartialOrdering<int> po(&pairs);
     check(po.IsLessOrEqual(1, 5) && po.IsLessOrEqual(1, 4),
           "Транзитивность в длинной цепи");
@@ -480,7 +480,7 @@ void TestPartialOrdering() {
 
   {
     MutableArraySequence<Pair<int>> pairs;
-    pairs.append({1, 2});
+    pairs.Append({1, 2});
     PartialOrdering<int> po(&pairs);
     bool threw = false;
     try {

@@ -19,7 +19,7 @@ template <class T> LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
   this->P = new MutableArraySequence<int>();
 
   for (int row = 0; row < n; row++) {
-    this->P->append(row);
+    this->P->Append(row);
 
     for (int col = 0; col < n; col++) {
       this->U->SetIJ(row, col, input->GetIJ(row, col));
@@ -59,9 +59,9 @@ template <class T> void LUDecompozition<T>::SwapRows(int step) {
 
   swaps++;
 
-  int tempP = P->get(step);
-  P->set(step, P->get(we_swap));
-  P->set(we_swap, tempP);
+  int tempP = P->Get(step);
+  P->Set(step, P->Get(we_swap));
+  P->Set(we_swap, tempP);
 
   for (int col = step; col < n; col++) {
     T tempU = U->GetIJ(step, col);
@@ -129,27 +129,27 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
   // Прямой ход
   Sequence<T> *y = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
-    y->append(T(0));
+    y->Append(T(0));
 
   for (int row = 0; row < n; row++) {
-    T sum = b->get(P->get(row));
+    T sum = b->Get(P->Get(row));
     for (int col = 0; col < row; col++) {
-      sum -= L->GetIJ(row, col) * y->get(col);
+      sum -= L->GetIJ(row, col) * y->Get(col);
     }
-    y->set(row, sum);
+    y->Set(row, sum);
   }
 
   // Обратный ход
   Sequence<T> *x = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
-    x->append(T(0));
+    x->Append(T(0));
 
   for (int row = n - 1; row >= 0; row--) {
-    T sum = y->get(row);
+    T sum = y->Get(row);
     for (int col = row + 1; col < n; col++) {
-      sum -= U->GetIJ(row, col) * x->get(col);
+      sum -= U->GetIJ(row, col) * x->Get(col);
     }
-    x->set(row, sum / U->GetIJ(row, row));
+    x->Set(row, sum / U->GetIJ(row, row));
   }
 
   delete y;

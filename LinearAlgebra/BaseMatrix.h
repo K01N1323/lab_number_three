@@ -36,14 +36,14 @@ public:
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
       throw std::out_of_range("Индекс вне границ матрицы");
     }
-    return data->get(row * cols + col);
+    return data->Get(row * cols + col);
   }
 
   virtual void SetIJ(int row, int col, const T &item) override {
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
       throw std::out_of_range("Индекс вне границ матрицы");
     }
-    data->set(row * cols + col, item);
+    data->Set(row * cols + col, item);
   }
 
   virtual void set(int index, const T &item) override {
@@ -51,7 +51,7 @@ public:
       throw std::out_of_range("Индекс вне массива");
     }
 
-    data->set(index, item);
+    data->Set(index, item);
   }
 
   virtual int GetRows() const override { return rows; }
@@ -65,7 +65,7 @@ public:
   virtual Matrix<T> *GetU() const override;
 
   virtual double GetFrobeniusNorm() const override {
-    double sum = this->data->reduce(SumOfSquaresFunc<T>, 0.0);
+    double sum = this->data->Reduce(SumOfSquaresFunc<T>, 0.0);
     return std::sqrt(sum);
   }
 
@@ -155,13 +155,13 @@ public:
   }
 
   virtual Matrix<T> *map(T (*mapper)(const T &)) const override {
-    Sequence<T> *MappedData = this->data->map(mapper);
+    Sequence<T> *MappedData = this->data->Map(mapper);
     Matrix<T> *res = this->CreateEmpty(rows, cols);
 
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
         int flatIndex = row * cols + col;
-        res->SetIJ(row, col, MappedData->get(flatIndex));
+        res->SetIJ(row, col, MappedData->Get(flatIndex));
       }
     }
     delete MappedData;
@@ -174,7 +174,7 @@ public:
 
   virtual T reduce(T (*ReduceFunc)(const T &, const T &),
                    const T &StartValue) const override {
-    return this->data->reduce(ReduceFunc, StartValue);
+    return this->data->Reduce(ReduceFunc, StartValue);
   }
 };
 

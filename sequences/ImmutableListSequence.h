@@ -3,23 +3,31 @@
 
 #include "ListSequence.h"
 
+// Неизменяемая последовательность на основе связного списка
 template <class T> class ImmutableListSequence : public ListSequence<T> {
 public:
-    ImmutableListSequence() : ListSequence<T>() {}
-    
-    ImmutableListSequence(T *items, int count) : ListSequence<T>(items, count) {}
-    
-    ImmutableListSequence(const ImmutableListSequence<T> &other) : ListSequence<T>(other) {}
-    
-    ImmutableListSequence(const LinkedList<T> &list) : ListSequence<T>(list) {}
+  // Конструктор по умолчанию
+  ImmutableListSequence() : ListSequence<T>() {}
 
-    ImmutableListSequence<T> *instance() override {
-        return new ImmutableListSequence<T>(*this);
-    }
+  // Конструктор копирования элементов из массива
+  ImmutableListSequence(T *items, int count) : ListSequence<T>(items, count) {}
 
-    ListSequence<T> *CreateEmpty() const override {
-        return new ImmutableListSequence<T>();
-    }
+  // Конструктор копирования
+  ImmutableListSequence(const ImmutableListSequence<T> &other)
+      : ListSequence<T>(other) {}
+
+  // Конструктор на основе существующего связного списка
+  ImmutableListSequence(const LinkedList<T> &list) : ListSequence<T>(list) {}
+
+  // Возвращает копию текущего объекта для безопасного изменения
+  ListSequence<T> *Instance() override {
+    return new ImmutableListSequence<T>(*this);
+  }
+
+  // Создает новую пустую неизменяемую последовательность
+  ListSequence<T> *CreateEmpty() const override {
+    return new ImmutableListSequence<T>();
+  }
 };
 
 #endif // IMMUTABLELISTSEQUENCE_H

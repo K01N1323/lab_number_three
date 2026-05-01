@@ -4,13 +4,16 @@
 // Интерфейс для итератора (перечислителя) элементов
 template <class T> class IEnumerator {
 public:
-    virtual ~IEnumerator() {}
+  virtual ~IEnumerator() {}
 
-    virtual const T &GetCurrent() const = 0;
+  // Возвращает текущий элемент
+  virtual const T &GetCurrent() const = 0;
 
-    virtual void MoveNext() = 0;
+  // Перемещает итератор к следующему элементу
+  virtual void MoveNext() = 0;
 
-    virtual bool HasNext() const = 0;
+  // Проверяет, есть ли следующий элемент
+  virtual bool HasNext() const = 0;
 };
 
 #endif // IENUMERATOR_H

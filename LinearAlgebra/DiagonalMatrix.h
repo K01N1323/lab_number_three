@@ -11,11 +11,11 @@ private:
 
     if (data == nullptr) {
       for (int count = 0; count < size; count++) {
-        result->append(T(0));
+        result->Append(T(0));
       }
     } else {
       for (int count = 0; count < size; count++) {
-        result->append(data[count]);
+        result->Append(data[count]);
       }
     }
 
@@ -33,7 +33,7 @@ public:
     if (row != col) {
       return this->ZeroValue;
     }
-    return this->data->get(row);
+    return this->data->Get(row);
   }
 
   void SetIJ(int row, int col, const T &item) override {
@@ -41,7 +41,7 @@ public:
       throw std::invalid_argument(
           "Нельзя задать ненулевой элемент вне диагонали");
     } else if (row == col) {
-      this->data->set(row, item);
+      this->data->Set(row, item);
     }
   }
 

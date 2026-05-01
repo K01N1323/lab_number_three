@@ -11,11 +11,11 @@ private:
 
     if (data == nullptr) {
       for (int count = 0; count < rows * cols; count++) {
-        result->append(T(0));
+        result->Append(T(0));
       }
     } else {
       for (int count = 0; count < rows * cols; count++) {
-        result->append(data[count]);
+        result->Append(data[count]);
       }
     }
     return result;

@@ -125,7 +125,7 @@ template <class T> void GaussMethod<T>::reverse() {
 
 template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
   for (int row = 0; row < n; row++) {
-    ConMatrixPtr->SetIJ(row, 0, b->get(row));
+    ConMatrixPtr->SetIJ(row, 0, b->Get(row));
   }
 
   triangle();
@@ -133,7 +133,7 @@ template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
 
   Sequence<T> *result = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++) {
-    result->append(ConMatrixPtr->GetIJ(row, 0));
+    result->Append(ConMatrixPtr->GetIJ(row, 0));
   }
 
   return result;
@@ -141,7 +141,7 @@ template <class T> Sequence<T> *GaussMethod<T>::Solve(const Sequence<T> *b) {
 
 template <class T> void GaussMethod<T>::SolveForTests(const Sequence<T> *b) {
   for (int row = 0; row < n; row++) {
-    ConMatrixPtr->SetIJ(row, 0, b->get(row));
+    ConMatrixPtr->SetIJ(row, 0, b->Get(row));
   }
   triangle();
   obrat();
