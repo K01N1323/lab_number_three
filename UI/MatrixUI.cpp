@@ -71,6 +71,8 @@ void PrintMenu(void) {
   cout << "17 – решить СЛАУ (LU-разложение)\n";
   cout << "18 - вывести номера матриц, доступных для взаимодействия\n";
   cout << "19 – очистить матрицу\n";
+  cout << "20 – выполнить Map (возвести элементы в квадрат)\n";
+  cout << "21 – выполнить Reduce (сумма элементов)\n";
   cout << "-1 – выйти из программы\n";
 }
 
@@ -95,12 +97,18 @@ int actions(int flag) {
       cout << "Размер матрицы должен быть положительным\n";
       break;
     }
-    if (MatricesCount < MaxMatrices) {
-      matrices[MatricesCount] = new SquareMatrix<double>(rows);
-      cout << "Матрица создана под номером " << MatricesCount << "\n";
-      MatricesCount++;
-    } else {
-      cout << "Нет места для новой матрицы\n";
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot != -1) {
+        matrices[slot] = new SquareMatrix<double>(rows);
+        cout << "Матрица создана под номером " << slot << "\n";
+      } else {
+        cout << "Нет места для новой матрицы\n";
+      }
     }
     break;
   }
@@ -112,12 +120,18 @@ int actions(int flag) {
       cout << "Размеры матрицы должны быть положительными\n";
       break;
     }
-    if (MatricesCount < MaxMatrices) {
-      matrices[MatricesCount] = new RectangularMatrix<double>(rows, cols);
-      cout << "Матрица создана под номером " << MatricesCount << "\n";
-      MatricesCount++;
-    } else {
-      cout << "Нет места для новой матрицы\n";
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot != -1) {
+        matrices[slot] = new RectangularMatrix<double>(rows, cols);
+        cout << "Матрица создана под номером " << slot << "\n";
+      } else {
+        cout << "Нет места для новой матрицы\n";
+      }
     }
     break;
   }
@@ -128,12 +142,18 @@ int actions(int flag) {
       cout << "Размер матрицы должен быть положительным\n";
       break;
     }
-    if (MatricesCount < MaxMatrices) {
-      matrices[MatricesCount] = new DiagonalMatrix<double>(rows);
-      cout << "Матрица создана под номером " << MatricesCount << "\n";
-      MatricesCount++;
-    } else {
-      cout << "Нет места для новой матрицы\n";
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot != -1) {
+        matrices[slot] = new DiagonalMatrix<double>(rows);
+        cout << "Матрица создана под номером " << slot << "\n";
+      } else {
+        cout << "Нет места для новой матрицы\n";
+      }
     }
     break;
   }
@@ -144,12 +164,18 @@ int actions(int flag) {
       cout << "Размер матрицы должен быть положительным\n";
       break;
     }
-    if (MatricesCount < MaxMatrices) {
-      matrices[MatricesCount] = new UpperTriangularMatrix<double>(rows);
-      cout << "Матрица создана под номером " << MatricesCount << "\n";
-      MatricesCount++;
-    } else {
-      cout << "Нет места для новой матрицы\n";
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot != -1) {
+        matrices[slot] = new UpperTriangularMatrix<double>(rows);
+        cout << "Матрица создана под номером " << slot << "\n";
+      } else {
+        cout << "Нет места для новой матрицы\n";
+      }
     }
     break;
   }
@@ -160,18 +186,25 @@ int actions(int flag) {
       cout << "Размер матрицы должен быть положительным\n";
       break;
     }
-    if (MatricesCount < MaxMatrices) {
-      matrices[MatricesCount] = new LowerTriangularMatrix<double>(rows);
-      cout << "Матрица создана под номером " << MatricesCount << "\n";
-      MatricesCount++;
-    } else {
-      cout << "Нет места для новой матрицы\n";
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot != -1) {
+        matrices[slot] = new LowerTriangularMatrix<double>(rows);
+        cout << "Матрица создана под номером " << slot << "\n";
+      } else {
+        cout << "Нет места для новой матрицы\n";
+      }
     }
     break;
   }
 
   case 6: {
-    num = ReadInt("Введите номер матрицы, которую вы хотите вывести на экран: ");
+    num =
+        ReadInt("Введите номер матрицы, которую вы хотите вывести на экран: ");
     if (num < 0 || num >= MatricesCount || matrices[num] == nullptr) {
       cout << "Матрицы с таким номером нет\n";
     } else {
@@ -244,14 +277,20 @@ int actions(int flag) {
         cout << "Размеры матриц не совпадают\n";
         return 0;
       }
-      if (MatricesCount >= MaxMatrices) {
-        cout << "Нет места для новой матрицы\n";
-        return 0;
+      {
+        int slot = -1;
+        for (int k = 0; k < MatricesCount; k++) {
+          if (matrices[k] == nullptr) { slot = k; break; }
+        }
+        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot == -1) {
+          cout << "Нет места для новой матрицы\n";
+          return 0;
+        }
+        matrices[slot] = *a + *b;
+        cout << "Результат сложения записан в матрицу под номером "
+             << slot << "\n";
       }
-      matrices[MatricesCount] = *a + *b;
-      cout << "Результат сложения записан в матрицу под номером "
-           << MatricesCount << "\n";
-      MatricesCount++;
     }
     break;
   }
@@ -270,14 +309,20 @@ int actions(int flag) {
         cout << "Размеры матриц не совпадают\n";
         return 0;
       }
-      if (MatricesCount >= MaxMatrices) {
-        cout << "Нет места для новой матрицы\n";
-        return 0;
+      {
+        int slot = -1;
+        for (int k = 0; k < MatricesCount; k++) {
+          if (matrices[k] == nullptr) { slot = k; break; }
+        }
+        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot == -1) {
+          cout << "Нет места для новой матрицы\n";
+          return 0;
+        }
+        matrices[slot] = *a - *b;
+        cout << "Результат вычитания записан в матрицу под номером "
+             << slot << "\n";
       }
-      matrices[MatricesCount] = *a - *b;
-      cout << "Результат вычитания записан в матрицу под номером "
-           << MatricesCount << "\n";
-      MatricesCount++;
     }
     break;
   }
@@ -298,31 +343,46 @@ int actions(int flag) {
         cout << "Нельзя перемножить матрицы с такими размерами\n";
         return 0;
       }
-      if (MatricesCount < MaxMatrices) {
-        matrices[MatricesCount] = *a * *b;
-        cout << "Результат умножения записан в матрицу под номером "
-             << MatricesCount << "\n";
-        MatricesCount++;
+      {
+        int slot = -1;
+        for (int k = 0; k < MatricesCount; k++) {
+          if (matrices[k] == nullptr) { slot = k; break; }
+        }
+        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot != -1) {
+          matrices[slot] = *a * *b;
+          cout << "Результат умножения записан в матрицу под номером "
+               << slot << "\n";
+        } else {
+          cout << "Нет места для новой матрицы\n";
+        }
       }
     }
     break;
   }
 
   case 12: {
-    num = ReadInt("Введите номер матрицы, которую вы хотите умножить на скаляр: ");
+    num = ReadInt(
+        "Введите номер матрицы, которую вы хотите умножить на скаляр: ");
     if (num < 0 || num >= MatricesCount || matrices[num] == nullptr) {
       cout << "Матрицы с таким номером не существует\n";
       return 0;
     }
-    if (MatricesCount >= MaxMatrices) {
-      cout << "Нет места для новой матрицы\n";
-      return 0;
-    }
     val = ReadDouble("Введите скаляр: ");
-    matrices[MatricesCount] = *matrices[num] * val;
-    cout << "Результат умножения на скаляр записан в матрицу под номером "
-         << MatricesCount << "\n";
-    MatricesCount++;
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1) {
+        cout << "Нет места для новой матрицы\n";
+        return 0;
+      }
+      matrices[slot] = *matrices[num] * val;
+      cout << "Результат умножения на скаляр записан в матрицу под номером "
+           << slot << "\n";
+    }
     break;
   }
 
@@ -336,15 +396,20 @@ int actions(int flag) {
       cout << "Матрица должна быть квадратной\n";
       return 0;
     }
-    if (MatricesCount >= MaxMatrices) {
-      cout << "Нет места для новой матрицы\n";
-      return 0;
-    }
     try {
-      matrices[MatricesCount] = matrices[num]->GetInverseMatrix();
-      cout << "Обратная матрица записана под номером " << MatricesCount
-           << "\n";
-      MatricesCount++;
+      Matrix<double> *inv = matrices[num]->GetInverseMatrix();
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1) {
+        delete inv;
+        cout << "Нет места для новой матрицы\n";
+        return 0;
+      }
+      matrices[slot] = inv;
+      cout << "Обратная матрица записана под номером " << slot << "\n";
     } catch (const exception &e) {
       cout << "Ошибка: " << e.what() << "\n";
     }
@@ -352,7 +417,8 @@ int actions(int flag) {
   }
 
   case 14: {
-    num = ReadInt("Введите номер матрицы, определитель которой нужно вычислить: ");
+    num = ReadInt(
+        "Введите номер матрицы, определитель которой нужно вычислить: ");
     if (num < 0 || num >= MatricesCount || matrices[num] == nullptr) {
       cout << "Матрицы с таким номером не существует\n";
       return 0;
@@ -441,6 +507,43 @@ int actions(int flag) {
     break;
   }
 
+  case 20: {
+    num = ReadInt("Введите номер матрицы для Map (x^2): ");
+    if (num < 0 || num >= MatricesCount || matrices[num] == nullptr) {
+      cout << "Матрицы с таким номером не существует\n";
+      return 0;
+    }
+    {
+      int slot = -1;
+      for (int k = 0; k < MatricesCount; k++) {
+        if (matrices[k] == nullptr) { slot = k; break; }
+      }
+      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1) {
+        cout << "Нет места для новой матрицы\n";
+        return 0;
+      }
+      matrices[slot] = matrices[num]->map([](const double &x) -> double { return x * x; });
+      cout << "Результат Map записан в матрицу под номером " << slot << "\n";
+    }
+    break;
+  }
+
+  case 21: {
+    num = ReadInt("Введите номер матрицы для Reduce (сумма): ");
+    if (num < 0 || num >= MatricesCount || matrices[num] == nullptr) {
+      cout << "Матрицы с таким номером не существует\n";
+      return 0;
+    }
+    {
+      double result = matrices[num]->reduce(
+          [](const double &a, const double &b) -> double { return a + b; },
+          0.0);
+      cout << "Сумма всех элементов матрицы: " << result << "\n";
+    }
+    break;
+  }
+
   default:
     cout << "Команда, которую вы ввели не существует\n";
     break;
@@ -454,6 +557,9 @@ void RunUI(void) {
     PrintMenu();
     cout << ">>> ";
     cin >> flag;
+    if (cin.eof()) {
+      break;
+    }
     if (cin.fail()) {
       cin.clear();
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -461,6 +567,10 @@ void RunUI(void) {
       continue;
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    if (flag != -1 && (flag < 1 || flag > 21)) {
+      cout << "Неизвестная команда. Введите число от 1 до 21 или -1 для выхода\n";
+      continue;
+    }
     if (actions(flag) == 1) {
       break;
     }

@@ -27,45 +27,28 @@ private:
     return -1;
   }
 
-  // Строит транзитивное замыкание отношения методом возведения матрицы в
-  // степень
+  // Строит транзитивное замыкание отношения алгоритмом Флойда-Уоршелла O(n^3)
   void BuildTransitiveClosure() {
     int n = Elements->GetLength();
 
-    SquareMatrix<int> *E = new SquareMatrix<int>(n);
-    E->MakeOnes();
-
-    Matrix<int> *R = (*GraphMatrix) + (*E);
-
+    // Копируем граф в ClosureMatrix и добавляем рефлексивность (диагональ)
     for (int row = 0; row < n; row++) {
       for (int col = 0; col < n; col++) {
-        ClosureMatrix->SetIJ(row, col, R->GetIJ(row, col));
+        ClosureMatrix->SetIJ(row, col, GraphMatrix->GetIJ(row, col));
       }
+      ClosureMatrix->SetIJ(row, row, 1);
     }
 
-    for (int count = 0; count < n - 1; count++) {
-      Matrix<int> *LocMull = (*R) * (*ClosureMatrix);
-
-      for (int row = 0; row < n; row++) {
-        for (int col = 0; col < n; col++) {
-          ClosureMatrix->SetIJ(row, col, LocMull->GetIJ(row, col));
-        }
-      }
-
-      delete LocMull;
-    }
-
-    // Нормируем: любое ненулевое значение заменяем на 1
-    for (int row = 0; row < n; row++) {
-      for (int col = 0; col < n; col++) {
-        if (ClosureMatrix->GetIJ(row, col) > 0) {
-          ClosureMatrix->SetIJ(row, col, 1);
+    // Алгоритм Флойда-Уоршелла
+    for (int k = 0; k < n; k++) {
+      for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+          if (ClosureMatrix->GetIJ(i, k) > 0 && ClosureMatrix->GetIJ(k, j) > 0) {
+            ClosureMatrix->SetIJ(i, j, 1);
+          }
         }
       }
     }
-
-    delete E;
-    delete R;
   }
 
 public:

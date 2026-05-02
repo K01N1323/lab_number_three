@@ -347,6 +347,36 @@ void TestGaussMethod() {
           "Обратная матрица");
     delete inv;
   }
+
+  {
+    // Вырожденная матрица (все нули) — должно бросить runtime_error
+    SquareMatrix<double> m(2);
+    bool threw = false;
+    try {
+      GaussMethod<double> g(&m);
+      g.TakeReverse();
+    } catch (const runtime_error &) {
+      threw = true;
+    }
+    check(threw, "Исключение для вырожденной (нулевой) матрицы");
+  }
+
+  {
+    // Вырожденная матрица (одинаковые строки) — должно бросить runtime_error
+    SquareMatrix<double> m(2);
+    m.SetIJ(0, 0, 1);
+    m.SetIJ(0, 1, 2);
+    m.SetIJ(1, 0, 1);
+    m.SetIJ(1, 1, 2);
+    bool threw = false;
+    try {
+      GaussMethod<double> g(&m);
+      g.TakeReverse();
+    } catch (const runtime_error &) {
+      threw = true;
+    }
+    check(threw, "Исключение для матрицы с одинаковыми строками");
+  }
 }
 
 void TestLUDecompozition() {
@@ -407,6 +437,40 @@ void TestLUDecompozition() {
       threw = true;
     }
     check(threw, "Исключение для прямоугольной матрицы");
+  }
+
+  {
+    // Вырожденная матрица (все нули) — должно бросить runtime_error
+    SquareMatrix<double> m(2);
+    bool threw = false;
+    try {
+      LUDecompozition<double> lu(&m);
+    } catch (const runtime_error &) {
+      threw = true;
+    }
+    check(threw, "Исключение для вырожденной (нулевой) матрицы в LU");
+  }
+
+  {
+    // Вырожденная 3x3 матрица (строки 1 и 2 одинаковые) — нулевой ведущий
+    // элемент появится при обратном ходе (Solve)
+    SquareMatrix<double> m(3);
+    m.SetIJ(0, 0, 1); m.SetIJ(0, 1, 2); m.SetIJ(0, 2, 3);
+    m.SetIJ(1, 0, 4); m.SetIJ(1, 1, 5); m.SetIJ(1, 2, 6);
+    m.SetIJ(2, 0, 4); m.SetIJ(2, 1, 5); m.SetIJ(2, 2, 6);
+    MutableArraySequence<double> b;
+    b.Append(1.0);
+    b.Append(2.0);
+    b.Append(2.0);
+    bool threw = false;
+    try {
+      LUDecompozition<double> lu(&m);
+      Sequence<double> *x = lu.Solve(&b);
+      delete x;
+    } catch (const runtime_error &) {
+      threw = true;
+    }
+    check(threw, "Исключение для матрицы с одинаковыми строками в LU");
   }
 }
 

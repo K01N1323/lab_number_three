@@ -79,8 +79,9 @@ template <class T> void LUDecompozition<T>::SwapRows(int step) {
 template <class T> void LUDecompozition<T>::subtraction(int current) {
   T pivot = U->GetIJ(current, current);
 
-  if (std::abs(pivot) < 1e-9)
-    return;
+  if (std::abs(static_cast<double>(pivot)) < 1e-9) {
+    throw std::runtime_error("Нулевой ведущий элемент, LU-разложение невозможно");
+  }
 
   for (int row = current + 1; row < n; row++) {
     T mnozh = U->GetIJ(row, current) / pivot;
@@ -149,7 +150,13 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
     for (int col = row + 1; col < n; col++) {
       sum -= U->GetIJ(row, col) * x->Get(col);
     }
-    x->Set(row, sum / U->GetIJ(row, row));
+    T diag = U->GetIJ(row, row);
+    if (std::abs(static_cast<double>(diag)) < 1e-9) {
+      delete x;
+      delete y;
+      throw std::runtime_error("Нулевой ведущий элемент, LU-разложение невозможно");
+    }
+    x->Set(row, sum / diag);
   }
 
   delete y;

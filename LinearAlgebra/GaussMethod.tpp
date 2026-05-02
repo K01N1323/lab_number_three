@@ -1,5 +1,6 @@
 #include "../Sequences/MutableArraySequence.h"
 #include <cmath>
+#include <stdexcept>
 
 template <class T> T clone_mapper(const T &val) { return val; }
 template <class T> T zero_mapper(const T &val) { return T(0); }
@@ -68,8 +69,7 @@ template <class T> void GaussMethod<T>::DivisionRow(int num) {
   T el = MatrixPtr->GetIJ(num, num);
 
   if (el == T(0)) {
-    det = T(0);
-    return;
+    throw std::runtime_error("Матрица вырожденная, метод Гаусса неприменим");
   }
 
   det *= el;
