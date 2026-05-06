@@ -1,5 +1,7 @@
+#ifndef LU_DECOMPOZITION_TPP
+#define LU_DECOMPOZITION_TPP
+
 #include "../Sequences/MutableArraySequence.h"
-#include "SquareMatrix.h"
 #include <cmath>
 
 template <class T> LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
@@ -12,8 +14,7 @@ template <class T> LUDecompozition<T>::LUDecompozition(const Matrix<T> *input) {
 
   this->swaps = 0;
 
-  // не получилось импользовать треугольные тк есть свапы, по замерам квадратная
-  // со свапами лучше
+  // Квадратная матрица вместо треугольной — из-за свапов строк это эффективнее
   this->L = new SquareMatrix<T>(n);
   this->U = new SquareMatrix<T>(n);
   this->P = new MutableArraySequence<int>();
@@ -127,7 +128,7 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
         "Размер вектора свободных членов не совпадает с матрицей");
   }
 
-  // Прямой ход
+  // Прямой ход: Ly = Pb
   Sequence<T> *y = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
     y->Append(T(0));
@@ -140,7 +141,7 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
     y->Set(row, sum);
   }
 
-  // Обратный ход
+  // Обратный ход: Ux = y
   Sequence<T> *x = new MutableArraySequence<T>();
   for (int row = 0; row < n; row++)
     x->Append(T(0));
@@ -162,3 +163,5 @@ Sequence<T> *LUDecompozition<T>::Solve(const Sequence<T> *b) const {
   delete y;
   return x;
 }
+
+#endif // LU_DECOMPOZITION_TPP

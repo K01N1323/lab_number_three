@@ -5,13 +5,15 @@
 #include "../Sequences/Sequence.h"
 #include "SquareMatrix.h"
 
+#include <stdexcept>
+
 template <typename T> struct Pair {
   T First;
   T Second;
 };
 
-// Частичный порядок на конечном множестве элементов,
-// Транзитивное замыкание строим при инициализации
+// Частичный порядок на конечном множестве.
+// Транзитивное замыкание строится при инициализации алгоритмом Флойда-Уоршелла.
 template <class T> class PartialOrdering {
 private:
   Sequence<T> *Elements;
@@ -27,19 +29,17 @@ private:
     return -1;
   }
 
-  // Строит транзитивное замыкание отношения алгоритмом Флойда-Уоршелла O(n^3)
+  // Алгоритм Флойда-Уоршелла O(n^3)
   void BuildTransitiveClosure() {
     int n = Elements->GetLength();
 
-    // Копируем граф в ClosureMatrix и добавляем рефлексивность (диагональ)
     for (int row = 0; row < n; row++) {
       for (int col = 0; col < n; col++) {
         ClosureMatrix->SetIJ(row, col, GraphMatrix->GetIJ(row, col));
       }
-      ClosureMatrix->SetIJ(row, row, 1);
+      ClosureMatrix->SetIJ(row, row, 1); // рефлексивность
     }
 
-    // Алгоритм Флойда-Уоршелла
     for (int k = 0; k < n; k++) {
       for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -55,7 +55,7 @@ public:
   PartialOrdering(Sequence<Pair<T>> *pairs) {
     Elements = new MutableArraySequence<T>();
 
-    // Собираем уникальные элементы из всех пар
+    // Собираем уникальные элементы
     for (int number = 0; number < pairs->GetLength(); number++) {
       T FirstItem = pairs->Get(number).First;
       T SecondItem = pairs->Get(number).Second;
@@ -81,7 +81,6 @@ public:
     GraphMatrix = new SquareMatrix<int>(n);
     ClosureMatrix = new SquareMatrix<int>(n);
 
-    // Заполняем матрицу смежности по переданным парам
     for (int number = 0; number < pairs->GetLength(); number++) {
       int row = GetIndex(pairs->Get(number).First);
       int col = GetIndex(pairs->Get(number).Second);
@@ -106,6 +105,7 @@ public:
     return ClosureMatrix->GetIJ(row, col) > 0;
   }
 
+  // Возвращает все пары (a, b) из транзитивного замыкания
   Sequence<Pair<T>> *GetMaterializedEdges() const {
     int n = Elements->GetLength();
 

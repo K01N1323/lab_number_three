@@ -1,3 +1,6 @@
+#ifndef GAUSS_METHOD_TPP
+#define GAUSS_METHOD_TPP
+
 #include "../Sequences/MutableArraySequence.h"
 #include <cmath>
 #include <stdexcept>
@@ -156,3 +159,5 @@ template <class T> Matrix<T> *GaussMethod<T>::GetInverseMatrix() const {
 template <class T> T GaussMethod<T>::GetElement(int row, int col) const {
   return MatrixPtr->GetIJ(row, col);
 }
+
+#endif // GAUSS_METHOD_TPP

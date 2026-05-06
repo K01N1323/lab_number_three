@@ -5,6 +5,7 @@
 #include "Matrix.h"
 #include <stdexcept>
 
+// Обёртка-декоратор, запрещающая мутацию переданной матрицы
 template <class T> class ImmutableMatrix : public Matrix<T> {
 private:
 

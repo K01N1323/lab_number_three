@@ -5,6 +5,7 @@
 #include "BaseMatrix.h"
 #include <stdexcept>
 
+// Нижнетреугольная матрица с упакованным хранением: N*(N+1)/2 элементов
 template <class T> class LowerTriangularMatrix : public BaseMatrix<T> {
 private:
   static Sequence<T> *CreateLowerTriangleData(const T *data, int size) {

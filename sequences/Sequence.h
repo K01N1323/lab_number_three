@@ -8,54 +8,26 @@
 // Абстрактный базовый класс для всех последовательностей
 template <class T> class Sequence {
 public:
-  // Виртуальный деструктор
   virtual ~Sequence() {}
 
-  // Возвращает первый элемент последовательности
   virtual const T &GetFirst() const = 0;
-
-  // Возвращает последний элемент последовательности
   virtual const T &GetLast() const = 0;
-
-  // Возвращает элемент по заданному индексу
   virtual const T &Get(int index) const = 0;
-
-  // Устанавливает значение элемента по заданному индексу
   virtual void Set(int index, const T &value) = 0;
-
-  // Возвращает текущую длину последовательности
   virtual int GetLength() const = 0;
-
-  // Возвращает подпоследовательность по заданным индексам
   virtual Sequence<T> *GetSubsequence(int startIndex, int endIndex) const = 0;
-
-  // Добавляет элемент в конец последовательности
   virtual Sequence<T> *Append(const T &item) = 0;
-
-  // Добавляет элемент в начало последовательности
   virtual Sequence<T> *Prepend(const T &item) = 0;
-
-  // Вставляет элемент по заданному индексу
   virtual Sequence<T> *InsertAt(const T &item, int index) = 0;
-
-  // Возвращает новую последовательность, являющуюся конкатенацией текущей и
-  // переданной
   virtual Sequence<T> *Concat(Sequence<T> *list) = 0;
 
-  // Перегрузка оператора индексации для удобного доступа к элементам
   const T &operator[](int index) const { return this->Get(index); }
 
-  // Возвращает экземпляр текущего типа
   virtual Sequence<T> *Instance() = 0;
-
-  // Создает пустую последовательность текущего типа
   virtual Sequence<T> *CreateEmpty() const = 0;
-
-  // Возвращает итератор для обхода последовательности
   virtual IEnumerator<T> *GetEnumerator() const = 0;
 
-  // Создает новую последовательность путем применения функции к каждому
-  // элементу
+  // Применяет функцию mapper к каждому элементу, возвращает новую последовательность
   Sequence<T> *Map(T (*mapper)(const T &)) const {
     Sequence<T> *result = this->CreateEmpty();
 
@@ -81,8 +53,7 @@ public:
     return result;
   }
 
-  // Создает новую последовательность, состоящую только из элементов,
-  // удовлетворяющих условию
+  // Фильтрует элементы по предикату, возвращает новую последовательность
   Sequence<T> *Where(bool (*where)(const T &)) const {
     Sequence<T> *result = this->CreateEmpty();
 
@@ -112,8 +83,7 @@ public:
     return result;
   }
 
-  // Сворачивает последовательность в одно значение, используя переданную
-  // функцию
+  // Сворачивает последовательность в одно значение (fold/reduce)
   template <typename T2>
   T2 Reduce(T2 (*reduce_func)(const T2 &, const T &),
             const T2 &start_value) const {

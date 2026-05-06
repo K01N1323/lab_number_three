@@ -4,6 +4,10 @@
 #include "../Sequences/Sequence.h"
 #include "Matrix.h"
 
+#include <cmath>
+#include <stdexcept>
+
+// Решение СЛАУ и вычисление обратной матрицы методом Гаусса
 template <class T> class GaussMethod {
 public:
 

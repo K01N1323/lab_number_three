@@ -4,6 +4,7 @@
 #include "../Sequences/IEnumerator.h"
 #include "../Sequences/Sequence.h"
 
+// Абстрактный интерфейс матрицы
 template <class T> class Matrix {
 public:
   virtual ~Matrix() {}

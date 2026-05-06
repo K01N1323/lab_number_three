@@ -1,49 +1,30 @@
 #include "BitSequence.h"
 #include <cstring>
 
-// ===================== Bit =====================
-
-// Конструктор по умолчанию или из значения bool
 Bit::Bit(bool v) : value(v) {}
 
-// Конструктор из int (преобразуется в логическое значение)
 Bit::Bit(int v) : value(v != 0) {}
 
-// Возвращает значение бита
 bool Bit::GetValue() const { return value; }
 
-// Перегрузка оператора побитового И (&)
 Bit Bit::operator&(const Bit &other) const {
   return Bit(this->value && other.value);
 }
 
-// Перегрузка оператора побитового ИЛИ (|)
 Bit Bit::operator|(const Bit &other) const {
   return Bit(this->value || other.value);
 }
 
-// Перегрузка оператора побитового ИСКЛЮЧАЮЩЕГО ИЛИ (^)
 Bit Bit::operator^(const Bit &other) const {
   return Bit(this->value != other.value);
 }
 
-// Перегрузка оператора логического отрицания (~)
 Bit Bit::operator~() const { return Bit(!this->value); }
 
-// Перегрузка оператора сравнения на равенство (==)
 bool Bit::operator==(const Bit &other) const {
   return this->value == other.value;
 }
 
-// Перегрузка оператора вывода в поток (<<)
-std::ostream &operator<<(std::ostream &os, const Bit &b) {
-  os << b.value;
-  return os;
-}
-
-// ===================== BitSequence =====================
-
-// Конструктор по умолчанию
 BitSequence::BitSequence() : data(nullptr), bit_count(0), byte_capacity(0) {}
 
 // Конструктор копирования
@@ -57,7 +38,6 @@ BitSequence::BitSequence(const BitSequence &other)
   }
 }
 
-// Деструктор
 BitSequence::~BitSequence() { delete[] data; }
 
 // Увеличивает ёмкость буфера при необходимости
@@ -162,12 +142,4 @@ BitSequence *BitSequence::Not() const {
   }
 
   return result;
-}
-
-// Перегрузка оператора вывода в поток
-std::ostream &operator<<(std::ostream &os, const BitSequence &bs) {
-  for (int i = 0; i < bs.bit_count; i++) {
-    os << bs.Get(i).GetValue();
-  }
-  return os;
 }

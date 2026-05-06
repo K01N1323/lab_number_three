@@ -3,11 +3,12 @@
 
 #include "../Sequences/Sequence.h"
 #include "Matrix.h"
+
+#include <cmath>
 #include <stdexcept>
 
 template <class T> class LUDecompozition {
 public:
-
   LUDecompozition(const Matrix<T> *input);
   ~LUDecompozition();
 
@@ -22,7 +23,6 @@ public:
   Sequence<T> *Solve(const Sequence<T> *b) const;
 
 private:
-
   int n;
   Matrix<T> *L;
   Matrix<T> *U;
@@ -35,7 +35,5 @@ private:
   void subtraction(int current);
   void decompose();
 };
-
-#include "LUDecompozition.tpp"
 
 #endif // LU_DECOMPOZITION_H

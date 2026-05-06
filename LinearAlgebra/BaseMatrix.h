@@ -13,6 +13,7 @@ static double SumOfSquaresFunc(const double &acc, const T &val) {
   return acc + v * v;
 }
 
+// Базовая реализация матрицы, хранящая данные в плоской Sequence
 template <class T> class BaseMatrix : public Matrix<T> {
 protected:
   Sequence<T> *data;

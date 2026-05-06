@@ -5,6 +5,7 @@
 #include "BaseMatrix.h"
 #include <stdexcept>
 
+// Верхнетреугольная матрица с упакованным хранением: N*(N+1)/2 элементов
 template <class T> class UpperTriangularMatrix : public BaseMatrix<T> {
 private:
   static Sequence<T> *CreateUpperTriangleData(const T *data, int size) {

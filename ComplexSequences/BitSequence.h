@@ -2,7 +2,6 @@
 #define BIT_SEQUENCE_H
 
 #include <cstdint>
-#include <iostream>
 #include <stdexcept>
 
 // Класс, представляющий отдельный бит (0 или 1)
@@ -14,29 +13,26 @@ public:
   // Конструктор по умолчанию или из значения bool
   Bit(bool v = false);
 
-  // Конструктор из int (преобразуется в логическое значение)
+  // Конструктор из int
   Bit(int v);
 
   // Возвращает значение бита
   bool GetValue() const;
 
-  // Перегрузка оператора побитового И (&)
+  // Перегрузка оператора побитового И
   Bit operator&(const Bit &other) const;
 
-  // Перегрузка оператора побитового ИЛИ (|)
+  // Перегрузка оператора побитового ИЛИ
   Bit operator|(const Bit &other) const;
 
-  // Перегрузка оператора побитового ИСКЛЮЧАЮЩЕГО ИЛИ (^)
+  // Перегрузка оператора побитового ИСКЛЮЧАЮЩЕГО ИЛИ
   Bit operator^(const Bit &other) const;
 
-  // Перегрузка оператора логического отрицания (~)
+  // Перегрузка оператора логического отрицания
   Bit operator~() const;
 
-  // Перегрузка оператора сравнения на равенство (==)
+  // Перегрузка оператора сравнения на равенство
   bool operator==(const Bit &other) const;
-
-  // Перегрузка оператора вывода в поток (<<)
-  friend std::ostream &operator<<(std::ostream &os, const Bit &b);
 };
 
 // Класс для работы с последовательностью битов (упакованное хранение: 8 бит на
@@ -80,9 +76,6 @@ public:
 
   // Инвертирует все биты в последовательности
   BitSequence *Not() const;
-
-  // Перегрузка оператора вывода в поток
-  friend std::ostream &operator<<(std::ostream &os, const BitSequence &bs);
 };
 
 #endif // BIT_SEQUENCE_H

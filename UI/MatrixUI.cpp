@@ -6,13 +6,13 @@
 #include "../LinearAlgebra/RectangularMatrix.h"
 #include "../LinearAlgebra/SquareMatrix.h"
 #include "../LinearAlgebra/UpperTriangleMatrix.h"
+
 #include <iostream>
 #include <limits>
 #include <string>
 
 using namespace std;
 
-// Безопасное чтение целого числа с повторным запросом при ошибке ввода
 static int ReadInt(const char *prompt) {
   int value;
   while (true) {
@@ -29,7 +29,6 @@ static int ReadInt(const char *prompt) {
   }
 }
 
-// Безопасное чтение вещественного числа с повторным запросом при ошибке ввода
 static double ReadDouble(const char *prompt) {
   double value;
   while (true) {
@@ -100,9 +99,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot != -1) {
         matrices[slot] = new SquareMatrix<double>(rows);
         cout << "Матрица создана под номером " << slot << "\n";
@@ -123,9 +127,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot != -1) {
         matrices[slot] = new RectangularMatrix<double>(rows, cols);
         cout << "Матрица создана под номером " << slot << "\n";
@@ -145,9 +154,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot != -1) {
         matrices[slot] = new DiagonalMatrix<double>(rows);
         cout << "Матрица создана под номером " << slot << "\n";
@@ -167,9 +181,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot != -1) {
         matrices[slot] = new UpperTriangularMatrix<double>(rows);
         cout << "Матрица создана под номером " << slot << "\n";
@@ -189,9 +208,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot != -1) {
         matrices[slot] = new LowerTriangularMatrix<double>(rows);
         cout << "Матрица создана под номером " << slot << "\n";
@@ -280,16 +304,21 @@ int actions(int flag) {
       {
         int slot = -1;
         for (int k = 0; k < MatricesCount; k++) {
-          if (matrices[k] == nullptr) { slot = k; break; }
+          if (matrices[k] == nullptr) {
+            slot = k;
+            break;
+          }
         }
-        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot == -1 && MatricesCount < MaxMatrices) {
+          slot = MatricesCount++;
+        }
         if (slot == -1) {
           cout << "Нет места для новой матрицы\n";
           return 0;
         }
         matrices[slot] = *a + *b;
-        cout << "Результат сложения записан в матрицу под номером "
-             << slot << "\n";
+        cout << "Результат сложения записан в матрицу под номером " << slot
+             << "\n";
       }
     }
     break;
@@ -312,16 +341,21 @@ int actions(int flag) {
       {
         int slot = -1;
         for (int k = 0; k < MatricesCount; k++) {
-          if (matrices[k] == nullptr) { slot = k; break; }
+          if (matrices[k] == nullptr) {
+            slot = k;
+            break;
+          }
         }
-        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot == -1 && MatricesCount < MaxMatrices) {
+          slot = MatricesCount++;
+        }
         if (slot == -1) {
           cout << "Нет места для новой матрицы\n";
           return 0;
         }
         matrices[slot] = *a - *b;
-        cout << "Результат вычитания записан в матрицу под номером "
-             << slot << "\n";
+        cout << "Результат вычитания записан в матрицу под номером " << slot
+             << "\n";
       }
     }
     break;
@@ -346,13 +380,18 @@ int actions(int flag) {
       {
         int slot = -1;
         for (int k = 0; k < MatricesCount; k++) {
-          if (matrices[k] == nullptr) { slot = k; break; }
+          if (matrices[k] == nullptr) {
+            slot = k;
+            break;
+          }
         }
-        if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+        if (slot == -1 && MatricesCount < MaxMatrices) {
+          slot = MatricesCount++;
+        }
         if (slot != -1) {
           matrices[slot] = *a * *b;
-          cout << "Результат умножения записан в матрицу под номером "
-               << slot << "\n";
+          cout << "Результат умножения записан в матрицу под номером " << slot
+               << "\n";
         } else {
           cout << "Нет места для новой матрицы\n";
         }
@@ -372,9 +411,14 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot == -1) {
         cout << "Нет места для новой матрицы\n";
         return 0;
@@ -400,9 +444,14 @@ int actions(int flag) {
       Matrix<double> *inv = matrices[num]->GetInverseMatrix();
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot == -1) {
         delete inv;
         cout << "Нет места для новой матрицы\n";
@@ -516,14 +565,20 @@ int actions(int flag) {
     {
       int slot = -1;
       for (int k = 0; k < MatricesCount; k++) {
-        if (matrices[k] == nullptr) { slot = k; break; }
+        if (matrices[k] == nullptr) {
+          slot = k;
+          break;
+        }
       }
-      if (slot == -1 && MatricesCount < MaxMatrices) { slot = MatricesCount++; }
+      if (slot == -1 && MatricesCount < MaxMatrices) {
+        slot = MatricesCount++;
+      }
       if (slot == -1) {
         cout << "Нет места для новой матрицы\n";
         return 0;
       }
-      matrices[slot] = matrices[num]->map([](const double &x) -> double { return x * x; });
+      matrices[slot] =
+          matrices[num]->map([](const double &x) -> double { return x * x; });
       cout << "Результат Map записан в матрицу под номером " << slot << "\n";
     }
     break;
@@ -568,7 +623,8 @@ void RunUI(void) {
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     if (flag != -1 && (flag < 1 || flag > 21)) {
-      cout << "Неизвестная команда. Введите число от 1 до 21 или -1 для выхода\n";
+      cout << "Неизвестная команда. Введите число от 1 до 21 или -1 для "
+              "выхода\n";
       continue;
     }
     if (actions(flag) == 1) {

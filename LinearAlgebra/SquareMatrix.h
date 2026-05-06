@@ -4,6 +4,8 @@
 #include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
 
+#include <stdexcept>
+
 template <class T> class SquareMatrix : public BaseMatrix<T> {
 private:
   static Sequence<T> *CreateSquareData(const T *data, int size) {
@@ -36,5 +38,9 @@ protected:
     return new SquareMatrix<T>(rows);
   }
 };
+
+// LUDecompozition.tpp использует SquareMatrix, поэтому включилб здесь,
+// после полного определения класса
+#include "LUDecompozition.tpp"
 
 #endif // SQUARE_MATRIX_H

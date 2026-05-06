@@ -4,6 +4,9 @@
 #include "../Sequences/MutableArraySequence.h"
 #include "BaseMatrix.h"
 
+#include <stdexcept>
+
+// Диагональная матрица: хранит только N элементов диагонали
 template <class T> class DiagonalMatrix : public BaseMatrix<T> {
 private:
   static Sequence<T> *CreateDiagonalData(const T *data, int size) {
